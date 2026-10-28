@@ -1,0 +1,398 @@
+/* The test, the report and careers: v1's card language — 20px radius, light
+   border, tokens — scaled up for one question per screen. */
+
+.test-card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+  padding: 20px var(--space-lg);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-card);
+  background: var(--surface-page);
+  box-shadow: var(--shadow-card);
+}
+
+.test-card--center {
+  align-items: center;
+  text-align: center;
+}
+
+.test-card__emoji {
+  font-size: 40px;
+  line-height: 1;
+}
+
+.test-card__emoji--big {
+  align-self: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 96px;
+  height: 96px;
+  border-radius: 50%;
+  background: var(--surface-primary);
+  font-size: 52px;
+}
+
+.test-card__title {
+  font-size: 20px;
+  font-weight: 700;
+  line-height: 26px;
+  color: var(--text-headings);
+}
+
+.test-card__body {
+  font-size: var(--size-body-md);
+  line-height: 22px;
+  color: var(--text-body);
+}
+
+.test-card__meta {
+  font-size: var(--size-body-sm);
+  color: var(--text-muted);
+}
+
+.test-card__prompt {
+  font-size: var(--size-body-sm);
+  font-weight: 600;
+  color: var(--text-muted);
+  text-align: center;
+}
+
+.test-card__question {
+  font-size: 20px;
+  font-weight: 700;
+  line-height: 27px;
+  color: var(--text-headings);
+  text-align: center;
+}
+
+.test-card__question--statement {
+  padding: 12px 0;
+  font-size: 21px;
+}
+
+.test-options {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+  margin-top: 4px;
+}
+
+.test-option {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+  min-height: 48px;
+  padding: 10px 14px;
+  border: 1.5px solid var(--border-light);
+  border-radius: 14px;
+  font-size: 15px;
+  font-weight: 500;
+  color: var(--text-body);
+  text-align: left;
+  transition: border-color 120ms ease, background-color 120ms ease;
+}
+
+.test-option > span:first-child:not(.test-option__dot) {
+  font-size: 22px;
+}
+
+/* Only real pointers: on touch a tap leaves :hover stuck on the next
+   question's option in the same place, which reads as already answered. */
+@media (hover: hover) {
+  .test-option:hover {
+    border-color: var(--border-primary);
+  }
+}
+
+.test-option--chosen {
+  border-color: var(--text-action);
+  background: var(--surface-primary);
+  color: var(--text-headings);
+}
+
+.test-option__dot {
+  width: 18px;
+  height: 18px;
+  border: 2px solid var(--border-light);
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.test-option--chosen .test-option__dot {
+  border: 5px solid var(--text-action);
+}
+
+.test-nav {
+  height: 44px;
+  padding-inline: 18px;
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-pill);
+  font-size: var(--size-body-md);
+  font-weight: 600;
+  color: var(--text-body);
+}
+
+.test-nav:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.test-count {
+  flex: 1;
+  align-self: center;
+  font-size: var(--size-body-sm);
+  color: var(--text-muted);
+  text-align: center;
+}
+
+.test-link {
+  font-size: var(--size-body-sm);
+  font-weight: 600;
+  color: var(--text-action);
+}
+
+.test-error {
+  padding: 10px 12px;
+  border-radius: 12px;
+  background: #fef2f2;
+  font-size: var(--size-body-sm);
+  color: #b91c1c;
+}
+
+.career-button:disabled {
+  opacity: 0.5;
+  cursor: progress;
+}
+
+/* ---- report page ---- */
+.report-hero {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+  padding: 20px var(--space-lg);
+  border-radius: var(--radius-card);
+  background: var(--surface-brand);
+  color: var(--text-on-action);
+}
+
+.report-hero__eyebrow {
+  font-size: var(--size-body-sm);
+  color: rgba(255, 255, 255, 0.75);
+}
+
+.report-hero__title {
+  font-size: 22px;
+  font-weight: 700;
+  line-height: 28px;
+}
+
+.report-hero__body {
+  font-size: var(--size-body-md);
+  line-height: 21px;
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.report-hero .career-report__letter {
+  background: rgba(255, 255, 255, 0.12);
+  color: rgba(255, 255, 255, 0.85);
+}
+
+.report-hero .career-report__letter strong {
+  color: #ffffff;
+}
+
+.report-section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+}
+
+.report-trait {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 12px 14px;
+  border: 1px solid var(--border-light);
+  border-radius: 16px;
+}
+
+.report-trait__head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: var(--size-body-md);
+  font-weight: 600;
+  color: var(--text-headings);
+}
+
+.report-trait__body {
+  font-size: var(--size-body-sm);
+  line-height: 19px;
+  color: var(--text-muted);
+}
+
+.report-notice {
+  padding: 12px 14px;
+  border-radius: 14px;
+  background: var(--surface-accent-orange);
+  font-size: var(--size-body-sm);
+  line-height: 19px;
+  color: var(--text-accent-orange);
+}
+
+.report-steps {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+  margin: 0;
+  padding-left: 20px;
+  font-size: var(--size-body-md);
+  line-height: 21px;
+  color: var(--text-body);
+}
+
+.report-fineprint {
+  font-size: 11px;
+  line-height: 16px;
+  color: var(--text-muted);
+}
+
+/* ---- career cards (report matches + explore) ---- */
+.job {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 14px;
+  border: 1px solid var(--border-light);
+  border-radius: 16px;
+  background: var(--surface-page);
+}
+
+.job--match {
+  border-color: var(--border-primary);
+}
+
+.job__head {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+}
+
+.job__emoji {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 24px;
+  background: var(--surface-muted);
+  font-size: 22px;
+  flex-shrink: 0;
+}
+
+.job__title {
+  flex: 1;
+  font-size: var(--size-body-md);
+  font-weight: 600;
+  line-height: 20px;
+  color: var(--text-headings);
+}
+
+.job__code {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: var(--text-accent-indigo);
+}
+
+.job__summary {
+  font-size: var(--size-body-sm);
+  line-height: 19px;
+  color: var(--text-body);
+}
+
+.job__route {
+  padding: 8px 10px;
+  border-radius: 10px;
+  background: var(--surface-muted);
+  font-size: 12px;
+  line-height: 17px;
+  color: var(--text-body);
+}
+
+.job__route strong {
+  color: var(--text-headings);
+}
+
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.chip {
+  height: 32px;
+  padding-inline: 12px;
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-pill);
+  font-size: var(--size-body-sm);
+  font-weight: 600;
+  color: var(--text-body);
+}
+
+.chip--active {
+  border-color: var(--text-action);
+  background: var(--text-action);
+  color: var(--text-on-action);
+}
+
+/* ---- dialog ---- */
+.dialog {
+  position: absolute;
+  inset: 0;
+  z-index: 60;
+  display: flex;
+  align-items: flex-end;
+  background: rgba(2, 41, 100, 0.42);
+}
+
+.dialog__panel {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+  width: 100%;
+  padding: 20px var(--space-lg) calc(20px + env(safe-area-inset-bottom));
+  border-radius: 24px 24px 0 0;
+  background: var(--surface-page);
+}
+
+.dialog__title {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--text-headings);
+}
+
+.dialog__body {
+  font-size: var(--size-body-md);
+  line-height: 21px;
+  color: var(--text-body);
+}
+
+.dialog__actions {
+  display: flex;
+  gap: var(--space-sm);
+}
+
+.dialog__actions > * {
+  flex: 1 0 0;
+}
+
+.dialog__cancel {
+  height: 44px;
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-pill);
+  font-weight: 600;
+  color: var(--text-body);
+}

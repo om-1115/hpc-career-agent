@@ -1,0 +1,33 @@
+{
+  "name": "hpc-career-agent",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "license": "MIT",
+  "scripts": {
+    "dev": "vite",
+    "dev:server": "tsx watch server/index.ts",
+    "dev:all": "npm run dev:server & npm run dev",
+    "build": "tsc -b && vite build",
+    "server": "tsx server/index.ts",
+    "account:add": "tsx server/scripts/addAccount.ts",
+    "seed:demo": "tsx server/scripts/seedDemo.ts",
+    "test": "tsx --test shared/*.test.ts server/*.test.ts"
+  },
+  "dependencies": {
+    "express": "^5.2.1",
+    "react": "^19.2.8",
+    "react-dom": "^19.2.8",
+    "react-router-dom": "^7.18.2"
+  },
+  "devDependencies": {
+    "@types/express": "^5.0.6",
+    "@types/node": "^26.4.0",
+    "@types/react": "^19.2.18",
+    "@types/react-dom": "^19.2.5",
+    "@vitejs/plugin-react": "^6.1.0",
+    "tsx": "^4.23.12",
+    "typescript": "^7.0.2",
+    "vite": "^8.2.2"
+  }
+}

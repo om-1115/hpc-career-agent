@@ -1,0 +1,96 @@
+.page {
+  display: flex;
+  flex-direction: column;
+}
+
+.page__header {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  flex-shrink: 0;
+  min-height: 72px;
+  padding: 12px var(--screen-gutter) 12px 12px;
+  overflow: hidden;
+  background: var(--surface-brand);
+  box-shadow: var(--shadow-appbar);
+}
+
+.page__back {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border: 0.5px solid var(--border-light);
+  border-radius: var(--radius-lg);
+  color: var(--text-on-action);
+  flex-shrink: 0;
+  transition: background-color 140ms ease;
+}
+
+.page__back:hover {
+  background: rgba(255, 255, 255, 0.12);
+}
+
+.page__back svg {
+  width: 20px;
+  height: 20px;
+}
+
+.page__title {
+  position: relative;
+  font-size: var(--size-body-lg);
+  font-weight: 600;
+  line-height: var(--lh-body-lg);
+  color: var(--text-on-action);
+}
+
+.page__progress {
+  position: absolute;
+  inset: auto 0 0 0;
+  height: 4px;
+  background: rgba(255, 255, 255, 0.18);
+}
+
+.page__progress span {
+  display: block;
+  height: 100%;
+  background: #60a5fa;
+  transition: width 240ms ease;
+}
+
+.page__content {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-section);
+  flex: 1 1 auto;
+  min-height: 0;
+  padding: var(--space-section) var(--screen-gutter) 32px;
+  overflow-y: auto;
+}
+
+.page__footer {
+  display: flex;
+  gap: var(--space-sm);
+  flex-shrink: 0;
+  padding: 12px var(--screen-gutter) calc(16px + env(safe-area-inset-bottom));
+  border-top: 1px solid var(--border-light);
+  background: var(--surface-page);
+}
+
+@media print {
+  .page__header,
+  .page__footer,
+  .chat-fab,
+  .no-print {
+    display: none !important;
+  }
+
+  .page,
+  .page__content {
+    height: auto !important;
+    overflow: visible !important;
+  }
+}

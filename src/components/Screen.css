@@ -1,0 +1,145 @@
+.screen {
+  position: relative;
+  width: 100%;
+  max-width: var(--screen-width);
+  height: 100dvh;
+  margin-inline: auto;
+  overflow: hidden;
+  background: var(--surface-page);
+  isolation: isolate;
+}
+
+.screen__scroll {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  overflow-x: hidden;
+  overscroll-behavior: contain;
+  /* Optional page texture. The Figma file layers a faint doodle pattern here,
+     but it lives in an unpublished library so it is not exported by the API.
+     Drop the tile into public/assets and set --page-texture to switch it on. */
+  background-image: var(--page-texture, none);
+  background-size: var(--screen-width) auto;
+  background-repeat: repeat;
+  background-attachment: local;
+  scrollbar-width: none;
+}
+
+.screen__scroll::-webkit-scrollbar {
+  display: none;
+}
+
+/* ---- navy header block (Figma: "5. Statistic v1" + top chrome) ---- */
+.screen__header {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  flex-shrink: 0;
+  height: var(--header-height);
+  overflow: hidden;
+  background: var(--surface-brand);
+  box-shadow: var(--shadow-appbar);
+}
+
+.screen__header-pattern {
+  position: absolute;
+  top: -240px;
+  left: 73px;
+  width: 539px;
+  height: 539px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+}
+
+.screen__header-pattern img {
+  width: 326.385px;
+  height: 436.532px;
+  flex: none;
+  transform: rotate(-45deg);
+}
+
+/* ---- scrollable page content ---- */
+.screen__content {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-section);
+  flex: 1 0 auto;
+  padding: var(--space-lg) var(--screen-gutter) var(--menubar-height);
+}
+
+.screen__section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+}
+
+.screen__list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+}
+
+.screen__rule {
+  height: 1px;
+  background: var(--border-light);
+  flex-shrink: 0;
+}
+
+.screen__stack-12 {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+}
+
+.screen__row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+}
+
+.screen__row > .section-header {
+  flex: 1 0 0;
+  min-width: 0;
+}
+
+/* ---- desktop: present the app inside a device frame ---- */
+@media (min-width: 520px) and (min-height: 600px) {
+  body {
+    background:
+      radial-gradient(1100px 520px at 50% -10%, #dce7f7 0%, rgba(220, 231, 247, 0) 62%),
+      #eef2f7;
+  }
+
+  #root {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+  }
+
+  .screen {
+    flex: 0 0 auto;
+    width: var(--screen-width);
+    height: min(917px, calc(100dvh - 48px));
+    border-radius: 40px;
+    box-shadow:
+      0 0 0 1px rgba(15, 23, 42, 0.06),
+      0 32px 64px -16px rgba(15, 23, 42, 0.3);
+  }
+}
+
+/* "Hi, Asha" — the signed-in profile, above the first section. */
+.screen__greeting {
+  margin-bottom: calc(var(--space-section) * -0.5);
+  font-size: 20px;
+  font-weight: 700;
+  line-height: 26px;
+  color: var(--text-headings);
+}

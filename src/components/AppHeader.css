@@ -1,0 +1,84 @@
+.app-header {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  /* Hugs its content. The 107/124/129/174px heights across the frames are
+     outcomes of the text metrics, not authored values — fixing one breaks the
+     moment a greeting wraps or the locale changes. */
+  gap: 12px;
+  padding-top: 52px;
+  padding-bottom: 20px;
+  background: var(--surface-brand-v2);
+  flex-shrink: 0;
+}
+
+.app-header__row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+  height: 40px;
+  padding-inline: 20px;
+}
+
+.app-header__menu {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: var(--radius-lg);
+  color: var(--text-on-action);
+  flex-shrink: 0;
+  transition: background-color 140ms ease;
+}
+
+.app-header__menu:hover {
+  background: rgba(255, 255, 255, 0.12);
+}
+
+.app-header__menu svg {
+  width: 22px;
+  height: 22px;
+}
+
+.app-header__titles {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  flex: 1 0 0;
+  min-width: 0;
+}
+
+.app-header__title {
+  font-size: 18px;
+  font-weight: 700;
+  line-height: 22px;
+  color: var(--text-on-action);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.app-header__subtitle {
+  font-size: 13px;
+  line-height: 16px;
+  color: var(--text-on-brand-muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.app-header__avatar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius-pill);
+  background: var(--surface-page);
+  color: var(--surface-brand-v2);
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  flex-shrink: 0;
+}

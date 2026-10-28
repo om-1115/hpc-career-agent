@@ -1,0 +1,123 @@
+.class-card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-lg);
+  width: 100%;
+  padding: var(--space-lg) 14.4px;
+  background: #ffffff;
+  border: 0.9px solid var(--border-light);
+  border-radius: var(--radius-card);
+  box-shadow: var(--shadow-card);
+  overflow: hidden;
+  text-align: left;
+  transition: border-color 140ms ease, transform 140ms ease;
+}
+
+.class-card:hover {
+  border-color: var(--border-primary);
+}
+
+.class-card:active {
+  transform: scale(0.995);
+}
+
+.class-card__head {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  width: 100%;
+}
+
+.class-card__avatar {
+  width: 44.4px;
+  height: 44.4px;
+  flex-shrink: 0;
+}
+
+.class-card__identity {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  flex: 1 0 0;
+  min-width: 0;
+  height: 44px;
+}
+
+.class-card__name {
+  font-size: var(--size-body-lg);
+  font-weight: 600;
+  line-height: var(--lh-body-lg);
+  color: var(--text-body);
+}
+
+.class-card__meta {
+  font-size: var(--size-body-sm);
+  font-weight: 400;
+  line-height: var(--lh-body-sm);
+  color: var(--text-muted);
+}
+
+.class-card__caret {
+  width: 21.6px;
+  height: 21.6px;
+  flex-shrink: 0;
+}
+
+.class-card__rule {
+  display: block;
+  width: 100%;
+  height: 0.6px;
+  background: var(--border-light);
+}
+
+.class-card__stats {
+  display: flex;
+  align-items: stretch;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.class-card__stat-group {
+  display: flex;
+  align-items: stretch;
+  gap: var(--space-md);
+}
+
+.class-card__divider {
+  display: block;
+  width: 0.6px;
+  background: var(--border-light);
+  flex-shrink: 0;
+}
+
+.class-card__stat {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.class-card__stat-label {
+  font-size: var(--size-caption);
+  font-weight: 300;
+  line-height: var(--lh-caption);
+  color: var(--text-muted);
+  white-space: nowrap;
+}
+
+.class-card__stat-value {
+  font-size: var(--size-body-md);
+  font-weight: 600;
+  line-height: var(--lh-body-md);
+}
+
+.class-card__stat-value--success {
+  color: var(--text-success);
+}
+
+.class-card__stat-value--warning {
+  color: var(--text-warning);
+}
+
+.class-card__stat-value--muted {
+  color: var(--text-muted);
+}

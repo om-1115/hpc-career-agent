@@ -1,0 +1,38 @@
+.top-app-bar {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  height: 64px;
+  padding: 8px 16px 8px 24px;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.top-app-bar__menu {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-xs);
+  height: 40px;
+  padding: 0 var(--space-md);
+  border: 0.5px solid var(--border-light);
+  border-radius: var(--radius-lg);
+  flex-shrink: 0;
+  transition: background-color 140ms ease;
+}
+
+.top-app-bar__menu:hover {
+  background: rgba(255, 255, 255, 0.12);
+}
+
+.top-app-bar__menu:active {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.top-app-bar__title {
+  font-size: var(--size-body-lg);
+  font-weight: 600;
+  line-height: var(--lh-body-lg);
+  color: var(--text-on-action);
+  white-space: nowrap;
+}

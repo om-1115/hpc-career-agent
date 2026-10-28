@@ -1,0 +1,8 @@
+node_modules
+dist
+.DS_Store
+*.local
+*.tsbuildinfo
+
+# Accounts (password hashes) and test results — real people's data.
+.data/

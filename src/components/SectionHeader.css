@@ -1,0 +1,30 @@
+.section-header {
+  display: flex;
+  align-items: center;
+  gap: 14.4px;
+  min-height: 21.6px;
+}
+
+.section-header__title {
+  flex: 1 0 0;
+  min-width: 0;
+  font-size: var(--size-section-title);
+  font-weight: 700;
+  line-height: var(--lh-section-title);
+  letter-spacing: -0.1296px;
+  color: var(--text-section);
+}
+
+.section-header__action {
+  font-size: 14.4px;
+  font-weight: 500;
+  line-height: 19.8px;
+  letter-spacing: -0.1008px;
+  color: var(--text-link);
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.section-header__action:hover {
+  text-decoration: underline;
+}

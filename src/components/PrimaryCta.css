@@ -1,0 +1,28 @@
+.primary-cta {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-xs);
+  height: 32px;
+  padding-inline: var(--space-sm);
+  border: 1px solid var(--border-primary);
+  border-radius: var(--radius-pill);
+  background: var(--surface-primary);
+  color: var(--text-action);
+  font-size: var(--size-body-sm);
+  font-weight: 500;
+  line-height: var(--lh-body-sm);
+  white-space: nowrap;
+  flex-shrink: 0;
+  transition: background-color 140ms ease;
+}
+
+.primary-cta:hover {
+  background: #dbeafe;
+}
+
+.primary-cta__icon {
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+}

@@ -1,0 +1,37 @@
+.coming-soon {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: 40px 24px;
+  border: 1px dashed var(--border-light);
+  border-radius: var(--radius-card);
+  background: var(--surface-page);
+  text-align: center;
+}
+
+.coming-soon__emoji {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  border-radius: var(--radius-pill);
+  background: var(--surface-muted);
+  font-size: 22px;
+  margin-bottom: 6px;
+}
+
+.coming-soon__title {
+  font-size: var(--size-body-md);
+  font-weight: 600;
+  line-height: var(--lh-body-md);
+  color: var(--text-headings);
+}
+
+.coming-soon__body {
+  font-size: var(--size-body-sm);
+  line-height: var(--lh-body-sm);
+  color: var(--text-muted);
+  max-width: 26ch;
+}
