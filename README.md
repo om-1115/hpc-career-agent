@@ -9,10 +9,19 @@ view for the teacher.
 Built for **Code for a Billion — Bharat Agentic-AI Hackathon 2026**
 (Code for India), impact area **01 · Education**. Open source under MIT.
 
+[![CI](https://github.com/om-1115/hpc-career-agent/actions/workflows/ci.yml/badge.svg)](https://github.com/om-1115/hpc-career-agent/actions/workflows/ci.yml)
+
 **Pitch deck and demo video:** [slides (.pptx)](docs/HPC-Career-Explainer.pptx) ·
 [slides (PDF)](docs/HPC-Career-Explainer.pdf) ·
 [2-minute explainer with a live demo (MP4)](docs/HPC-Career-Demo.mp4) ·
-[screenshots](docs/screens/)
+[all screenshots](docs/screens/)
+
+<p>
+  <img src="docs/screens/05-interest-question.png" width="200" alt="A career test question: how much would you like to repair a bicycle, a fan or a mixer?">
+  <img src="docs/screens/08-report-top.png" width="200" alt="A career report: You're a Doer and a Thinker, with interest bars">
+  <img src="docs/screens/11-explore-careers.png" width="200" alt="Explore careers, sorted by best fit, each with the route from Class 10">
+  <img src="docs/screens/14-teacher-class.png" width="200" alt="The teacher's class view: who has finished and each student's interest code">
+</p>
 
 ## Why
 
@@ -78,7 +87,8 @@ and where the class's interests lie.
 
 ```
 shared/       the test items, 36 careers, scoring and report wording — plain TypeScript, unit-tested
-server/       Express API: accounts, results, the counsellor (scripted for now)
+server/       Express API: accounts, results, the counsellor (scripted for now) and its agent tools
+counsellor/   the counsellor agent, built in AgentFoundry
 src/          React 19 + Vite app: v1 Holistic Progress Card screens + the career journey
 ```
 
@@ -101,8 +111,12 @@ not sign everyone out.
 
 ## Next
 
-- **Make the counsellor an agent**: a model with tools to read the student's
-  result, look up careers and routes, and save a plan the teacher can see.
+- **Make the counsellor an agent** — in progress, built in AgentFoundry: a
+  model with tools to read the student's result, look up careers and routes,
+  save a plan the teacher can see, and alert the teacher when a student is in
+  distress. The five tools are built and tested (`server/counsellor/tools.ts`);
+  design in [docs/counsellor-agent.md](docs/counsellor-agent.md), AgentFoundry
+  steps in [counsellor/AF_BUILD.md](counsellor/AF_BUILD.md).
 - Hindi and other Indian languages for the test and report.
 - More careers, with links to official course and exam pages.
 - Deployment and usage data from a pilot school.

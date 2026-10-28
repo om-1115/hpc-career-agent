@@ -19,7 +19,19 @@ import type { TestResult } from '../../shared/scoring.ts'
 export type Role = 'student' | 'teacher'
 export type Profile = { role: Role; code: string; name: string; classLine?: string }
 type StoredAccount = Profile & { password: string }
-type Data = { accounts: StoredAccount[]; results: Record<string, TestResult> }
+
+/** A career plan the student agreed to save with the counsellor; the teacher sees the latest. */
+export type Plan = { summary: string; careerIds: string[]; nextSteps: string[]; savedAt: string }
+export type AlertReason = 'distress' | 'safety' | 'other'
+/** A wellbeing flag the counsellor raised; open until a teacher resolves it. */
+export type Alert = { id: string; studentCode: string; reason: AlertReason; note: string; createdAt: string; resolvedAt?: string }
+
+type Data = {
+  accounts: StoredAccount[]
+  results: Record<string, TestResult>
+  plans?: Record<string, Plan>
+  alerts?: Alert[]
+}
 
 const KEY_LENGTH = 64
 const DUMMY_HASH = hashPassword(randomBytes(16).toString('hex'))
@@ -90,5 +102,44 @@ export class Store {
     const data = this.read()
     delete data.results[normaliseCode(studentCode)]
     this.write(data)
+  }
+
+  plan(studentCode: string): Plan | null {
+    return this.read().plans?.[normaliseCode(studentCode)] ?? null
+  }
+
+  /** Replaces the student's previous plan: the teacher acts on the latest one. */
+  savePlan(studentCode: string, plan: Plan): void {
+    const data = this.read()
+    data.plans = { ...data.plans, [normaliseCode(studentCode)]: plan }
+    this.write(data)
+  }
+
+  addAlert(alert: Omit<Alert, 'id' | 'createdAt' | 'studentCode'> & { studentCode: string }): Alert {
+    const data = this.read()
+    const saved: Alert = {
+      ...alert,
+      studentCode: normaliseCode(alert.studentCode),
+      id: randomBytes(8).toString('hex'),
+      createdAt: new Date().toISOString(),
+    }
+    data.alerts = [...(data.alerts ?? []), saved]
+    this.write(data)
+    return saved
+  }
+
+  /** Open alerts, oldest first. */
+  openAlerts(): Alert[] {
+    return (this.read().alerts ?? []).filter((alert) => !alert.resolvedAt)
+  }
+
+  /** Mark an alert handled. False if there is no such open alert. */
+  resolveAlert(id: string): boolean {
+    const data = this.read()
+    const alert = data.alerts?.find((candidate) => candidate.id === id && !candidate.resolvedAt)
+    if (!alert) return false
+    alert.resolvedAt = new Date().toISOString()
+    this.write(data)
+    return true
   }
 }
