@@ -1,6 +1,6 @@
 # Explainer video — narration
 
-The voiceover of [HPC-Career-Demo.mp4](HPC-Career-Demo.mp4) (2:56, 1080p, captioned). Voice: “Lekha”, the Hindi (India) system voice on macOS, reading English.
+The voiceover of [HPC-Career-Demo.mp4](HPC-Career-Demo.mp4) (2:58, 1080p, captioned). Voice: “Lekha”, the Hindi (India) system voice on macOS, reading English.
 
 **0:00 · intro** — Every student deserves a career conversation. This is HPC Career: a Holistic Progress Card that becomes every student's career passbook.
 
@@ -24,8 +24,8 @@ The voiceover of [HPC-Career-Demo.mp4](HPC-Career-Demo.mp4) (2:56, 1080p, captio
 
 **2:32 · honest** — It is open source, and honest about its limits: the report is a starting point, not a verdict, and only the student and their teacher see a result.
 
-**2:42 · next** — Next: an AI counsellor agent, built in AgentFoundry, a pilot with a partner school, and Hindi and more Indian languages.
+**2:41 · next** — Already built: an AI counsellor agent, made and tested in AgentFoundry. Next, a pilot with a partner school, then Hindi and more Indian languages.
 
-**2:50 · close** — Every student deserves a career conversation. HPC Career puts one in their pocket.
+**2:51 · close** — Every student deserves a career conversation. HPC Career puts one in their pocket.
 
 Sources for the figures: UDISE+ 2023-24 (Ministry of Education); Mindler survey of 10,000 students aged 14–21 (2019); Bharat Career Aspiration Report 2024 (UNICEF YuWaah & iDreamCareer, 4,968 Class 9–12 students from low-income families in 25 states).
