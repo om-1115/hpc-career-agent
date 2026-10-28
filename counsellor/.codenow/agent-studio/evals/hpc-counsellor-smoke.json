@@ -1,0 +1,10 @@
+{
+  "name": "hpc-counsellor-smoke",
+  "description": "Smoke test for HPC Career Counsellor",
+  "cases": [
+    {
+      "input": "Say \"hello world\" exactly, nothing else.",
+      "expected_contains": "hello world"
+    }
+  ]
+}

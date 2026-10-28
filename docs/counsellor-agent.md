@@ -111,8 +111,10 @@ How to help
   yes to saving it, and tell them their teacher will be able to see it.
 
 How to speak
-- Short, warm and plain: they are 14–17 and may be reading in a second
-  language. Short paragraphs and lists; no jargon without explaining it.
+- Short, warm and plain: they are 14–17, reading on a phone and maybe in a
+  second language. Keep each reply under about 120 words; in a list, one short
+  line per item. Offer to say more rather than saying everything at once. No
+  jargon without explaining it.
 - Reply in the language they write in (English, Hindi or Hinglish).
 - Never assume a career from gender, caste, religion, region or family income,
   and don't steer anyone away from a path for those reasons.
@@ -238,6 +240,7 @@ AgentFoundry scaffolds agents on its supported kits, so the counsellor is
 built there on its **Claude Agent SDK (TypeScript)** kit, with the five tools
 above added as AF tools (an in-process MCP server) and the SDK's built-in
 file, shell and web tools turned off. It lives in `counsellor/` so AF's
-generated files don't collide with the app's. AF's Run, Test and Evals use its
-served models, so **no API key is needed until the app runs the agent for
-students**. Step-by-step: [../counsellor/AF_BUILD.md](../counsellor/AF_BUILD.md).
+generated files don't collide with the app's. AF's Evals use its served
+models, so they need **no API key**; running the agent itself (AF's Run tab)
+uses the Claude Agent SDK and needs a Claude login or `ANTHROPIC_API_KEY`.
+How it was built, and how to try it: [../counsellor/AF_BUILD.md](../counsellor/AF_BUILD.md).

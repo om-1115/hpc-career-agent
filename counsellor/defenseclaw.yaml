@@ -1,0 +1,64 @@
+# AgentFoundry-generated DefenseClaw policy (v0.1.9 default).
+# Schema reference: https://github.com/cisco-ai-defense/defenseclaw
+# (see policies/scanners/* and policies/guardrail/* for the full grammar).
+#
+# This file is the single source of truth for what DefenseClaw enforces on
+# this agent. AgentFoundry's runtime gateway reads it on every input/output/tool
+# call. Hand-edit freely — AgentFoundry will NOT overwrite a policy that already
+# exists at scaffold time.
+
+version: 1
+
+# ── Skills scanner ─────────────────────────────────────────────────────────
+# Scans the agent's declared capabilities (manifest tools, prompts, skills)
+# for known-bad patterns: prompt-injection scaffolds, exfiltration helpers,
+# unsafe shell wrappers, etc. Runs at `defenseclaw skill scan all`.
+skills_scanner:
+  enabled: true
+  fail_on: [high, critical]   # warnings still log; only high/critical block
+  include:
+    - .codenow/agent-studio/prompts/**
+    - .codenow/agent-studio/skills/**
+    - tools/**
+
+# ── MCP scanner ────────────────────────────────────────────────────────────
+# Inspects every Model Context Protocol server the agent talks to. Allow-list
+# mode is intentionally permissive at scaffold: log everything, only block the
+# known-bad list below. Tighten by moving servers from `allow` to a strict
+# `only` list once you know what your agent actually needs.
+mcp_scanner:
+  enabled: true
+  mode: allowlist             # allowlist | strict | off
+  allow: ["*"]                # permissive default — every MCP server is logged
+  block:
+    - filesystem-unrestricted # blocks unbounded fs:// MCP servers
+    - shell-exec-unrestricted # blocks shell-exec MCP servers without allow-lists
+
+# ── CodeGuard ──────────────────────────────────────────────────────────────
+# Static analysis on tool implementations + scaffolded code. The four checks
+# below are CodeGuard's standard set; add custom rule packs at `rules:`.
+codeguard:
+  enabled: true
+  checks:
+    secrets: true             # detect hardcoded API keys, tokens, certs
+    unsafe_deserialization: true  # pickle.load, yaml.load, eval(JSON-like blobs)
+    weak_crypto: true         # MD5/SHA1 for auth, hardcoded IVs, ECB mode
+    injection: true           # SQL/command/template injection patterns
+  rules: []                   # extend with custom rule pack paths
+
+# ── Guardrail Proxy (runtime) ──────────────────────────────────────────────
+# Consumed by the v0.1.8 runtime hooks: preflightInput / postflightOutput /
+# preflightToolCall. `observe` logs decisions to the gateway sink without
+# blocking the agent — the responsible default for new agents. Flip to
+# `action` once the observe log shows a clean baseline.
+guardrail:
+  enabled: true
+  mode: observe               # observe | action | off
+  fail_mode: open             # open = agent keeps running if gateway down
+  # Network egress allowlist — empty by default, intentionally. Declare every
+  # host your agent reaches out to. An empty list under mode=action means the
+  # agent has zero outbound network access, which surfaces missing entries
+  # immediately instead of leaking traffic silently.
+  network_allow: []
+  # PII categories the proxy redacts on the way out. Add or remove per agent.
+  redact: [email, phone, ssn, credit_card, api_key]

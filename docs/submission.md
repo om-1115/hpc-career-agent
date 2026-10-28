@@ -43,16 +43,32 @@ passbook, open source under MIT:
   described as strengths, the six best-fitting careers with the route to each
   from Class 10, next steps, and a print-ready page for parents.
 - **Explore careers:** 36 careers with Indian routes, sorted by fit.
-- **Counsellor chat:** streaming replies; scripted in the app today.
+- **Counsellor agent, built in AgentFoundry:** a Claude Agent SDK agent with five
+  tools that read the student's own result, look up careers and their routes
+  from Class 10, save a plan only after the student agrees, and alert the
+  teacher if a student is in distress. (The chat screen in the app is still
+  scripted; plugging the agent in needs a model key.)
 - **Teacher view:** who has finished, the class's spread of interests, and each
   student's interest code.
 - Student and teacher sign-in (hashed passwords, lockout, role-gated pages), 23
   automated tests and CI on every push.
 
-**How we used AgentFoundry:** *[fill in once the counsellor agent is built and
-evaluated in AF: the agent (Claude Agent SDK kit) in `counsellor/`, its five
-tools wired to the app's data (`server/counsellor/tools.ts`), the evals and
-what they caught, with screenshots in `docs/af/`.]*
+**How we used AgentFoundry:** we built the counsellor agent in AF
+(`counsellor/`, screenshots in `docs/af/`):
+
+- **Built:** scaffolded with AF's *Claude Agent SDK (TypeScript)* kit; created
+  all five tools with AF's Tool Builder, then wired each one to the app's own,
+  unit-tested functions, so the agent reads and writes exactly what the app's
+  screens do. Built-in file, shell and web tools are off, and the student is
+  never a tool parameter, so the agent can only see the signed-in student.
+- **Tested:** each tool with AF's Tools → Test; a live run from the agent card,
+  where the Trace shows it calling `get_my_result` and answering from the
+  student's real result.
+- **Evaluated:** a 10-case suite in AF Evals covering safety (Tele-MANAS 14416),
+  privacy, consent before saving, staying on topic, replying in Hindi, no
+  gender stereotypes, family conversations and not inventing exam facts. The
+  first run passed 9/10: replies were too long for a phone. We gave the prompt a
+  concrete length limit and re-ran: 10/10, with replies 20% shorter on average.
 
 **GitHub repository URL**
 
@@ -100,8 +116,7 @@ Education
 
 **Confirmations**
 
-- [ ] Built using AgentFoundry (AF), the official IDE — *tick only once the
-  counsellor agent is built there*
+- [x] Built using AgentFoundry (AF), the official IDE
 - [x] Our repository is public and includes a README with setup steps
 - [x] The demo link works and is accessible to judges — *after uploading the
   video*

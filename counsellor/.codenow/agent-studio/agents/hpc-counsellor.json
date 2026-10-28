@@ -1,0 +1,45 @@
+{
+  "schemaVersion": 1,
+  "slug": "hpc-counsellor",
+  "createdAt": 1793214824047,
+  "updatedAt": 1793215543324,
+  "name": "HPC Career Counsellor",
+  "description": "A career counsellor for Indian students in Classes 9–12, inside the HPC Career app. It reads the student's career-test result, suggests careers only from the app's 36-career list with the route to each from Class 10, saves a plan only after the student agrees, and alerts their teacher if the student shows distress. Brief and warm, in English, Hindi or Hinglish; never stereotypes by gender, caste, religion, region or income.",
+  "function": "engineering",
+  "version": "0.1.0",
+  "builtBy": "",
+  "runsAt": "Self-hosted (Anthropic API)",
+  "preferredModel": "claude-opus-5-5",
+  "invocationUrl": "",
+  "authMode": "none",
+  "promptField": "prompt",
+  "responseField": "response",
+  "tags": [
+    "claude-agent-sdk-ts"
+  ],
+  "prompts": [
+    "hpc-counsellor-system"
+  ],
+  "evals": [
+    "hpc-counsellor-smoke",
+    "hpc-counsellor-behaviour"
+  ],
+  "tools": [
+    "get_my_result",
+    "search_careers",
+    "get_career",
+    "save_plan",
+    "alert_teacher"
+  ],
+  "dataAccess": [],
+  "price": "free",
+  "origin": "built",
+  "lifecycle": "draft",
+  "kit": "claude-agent-sdk-ts",
+  "memoryConfig": {
+    "enabled": true,
+    "provider": "codenow-ledger",
+    "contextBudget": 2000,
+    "semantic": true
+  }
+}

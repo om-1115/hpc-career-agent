@@ -80,7 +80,7 @@ The evidence for each, in this repository:
 | --- | --- |
 | **Size of the problem** | 24.8 crore students in Indian schools (UDISE+ 2023-24), and every one of them faces a stream decision around Class 10. The app runs on any phone browser, including shared classroom phones. |
 | **Severity of the problem** | 93% of 10,000 students surveyed knew only 7 of about 250 career options (Mindler, 2019). Only 9.36% of low-income Class 9–12 students had ever had career guidance, and family members (30%) and teachers (13%) were the top influences (Bharat Career Aspiration Report 2024). The choice sets a student's next decade of study and work. |
-| **Quality of the solution** | A complete journey — test, report, careers with Indian routes, passbook, counsellor, teacher view — built on Holland's RIASEC model and the public-domain Mini-IPIP, scored on the server, with strength-based wording and honest limits ([the test, honestly](#the-test-honestly)). Hashed passwords, a 5-try lock, role-gated pages, 23 automated tests and CI on every push. The counsellor's AI agent is designed and its tools are built and tested ([design](docs/counsellor-agent.md)). |
+| **Quality of the solution** | A complete journey — test, report, careers with Indian routes, passbook, counsellor, teacher view — built on Holland's RIASEC model and the public-domain Mini-IPIP, scored on the server, with strength-based wording and honest limits ([the test, honestly](#the-test-honestly)). Hashed passwords, a 5-try lock, role-gated pages, 23 automated tests and CI on every push. The counsellor agent is built in AgentFoundry, with its tools wired to the app's tested code and a 10-case eval suite that passes ([the agent](#the-counsellor-agent-built-in-agentfoundry)). |
 | **Proven impact** | Not deployed for this hackathon, so there is no field data yet. The repository runs in two commands with a seeded demo school, and the [deck](docs/HPC-Career-Explainer.pdf) sets out what a pilot would measure: students who finish, reports discussed at home, and teacher use in subject choice. |
 
 ## The test, honestly
@@ -101,12 +101,46 @@ The evidence for each, in this repository:
 - Scoring runs **only on the server** (`shared/scoring.ts`); the browser sends
   answers and shows what comes back.
 
+## The counsellor agent, built in AgentFoundry
+
+The counsellor is a **Claude Agent SDK** agent built in
+[AgentFoundry](https://codeforindia.org/hackathon) (the hackathon's IDE) in
+[`counsellor/`](counsellor/). It has five tools, created with AgentFoundry's
+Tool Builder and wired to the app's own, unit-tested functions
+([`server/counsellor/tools.ts`](server/counsellor/tools.ts)):
+
+| Tool | What it does |
+| --- | --- |
+| `get_my_result` | the signed-in student's interest code, personality and best-fitting careers |
+| `search_careers` | the app's 36 careers, by RIASEC letters or keyword, with fit for this student |
+| `get_career` | one career and its route from Class 10 — the only routes it may quote |
+| `save_plan` | saves a plan the teacher can see, only after the student says yes |
+| `alert_teacher` | flags distress to the teacher, alongside the Tele-MANAS helpline (14416) |
+
+It has no file, shell or web access, and the student is never a tool
+parameter, so it can only see the student who is signed in. In AgentFoundry
+the agent answers *"Which careers suit me?"* by calling `get_my_result` and
+suggesting directions from that student's real result, and its **10 behaviour
+evals pass** (safety, privacy, consent, scope, Hindi, fairness, honesty). The
+first run passed 9/10 because replies were too long for a phone; a concrete
+length rule in the prompt fixed it and made replies 20% shorter.
+
+<p>
+  <img src="docs/af/04-run.png" width="420" alt="The agent in AgentFoundry calling get_my_result and suggesting careers from the student's result">
+  <img src="docs/af/03-evals.png" width="420" alt="AgentFoundry Evals: 10 of 10 counsellor behaviour cases pass">
+</p>
+
+How it was built, and how to run it: [counsellor/AF_BUILD.md](counsellor/AF_BUILD.md).
+Design, prompt and model choices: [docs/counsellor-agent.md](docs/counsellor-agent.md).
+The app's chat screen still uses its script; connecting it to the agent needs
+a model key on the server.
+
 ## How it is built
 
 ```
 shared/       the test items, 36 careers, scoring and report wording — plain TypeScript, unit-tested
 server/       Express API: accounts, results, the counsellor (scripted for now) and its agent tools
-counsellor/   the counsellor agent, built in AgentFoundry
+counsellor/   the counsellor agent, built in AgentFoundry (Claude Agent SDK, five tools, evals)
 src/          React 19 + Vite app: v1 Holistic Progress Card screens + the career journey
 ```
 
@@ -129,12 +163,9 @@ not sign everyone out.
 
 ## Next
 
-- **Make the counsellor an agent** — in progress, built in AgentFoundry: a
-  model with tools to read the student's result, look up careers and routes,
-  save a plan the teacher can see, and alert the teacher when a student is in
-  distress. The five tools are built and tested (`server/counsellor/tools.ts`);
-  design in [docs/counsellor-agent.md](docs/counsellor-agent.md), AgentFoundry
-  steps in [counsellor/AF_BUILD.md](counsellor/AF_BUILD.md).
+- **Connect the counsellor agent to the app's chat screen**, with a model key
+  on the server and the signed-in student passed to its tools, then re-run the
+  evals on that model.
 - Hindi and other Indian languages for the test and report.
 - More careers, with links to official course and exam pages.
 - Deployment and usage data from a pilot school.
