@@ -1,11 +1,13 @@
 # Counsellor agent — design
 
-Status: **tools built and tested; agent in progress in AgentFoundry; not
-deployed.** The hackathon entry is the repository, the deck and the video. The
-running app keeps its scripted counsellor (`shared/counsellorScript.ts`,
-streamed by `server/lib/offline.ts`). The agent is built and evaluated inside
-AgentFoundry on its served models, with no API key. The sections on the key,
-costs and privacy describe what a real deployment would need later.
+Status: **agent built in AgentFoundry, tools tested, 10/10 behaviour evals
+passing; not deployed.** The agent is in [`counsellor/`](../counsellor/)
+(how it was built: [AF_BUILD.md](../counsellor/AF_BUILD.md); screenshots in
+[`docs/af/`](af/)). The hackathon entry is the repository, the deck and the
+video. The app's chat screen still uses its scripted counsellor
+(`shared/counsellorScript.ts`, streamed by `server/lib/offline.ts`):
+connecting it to the agent needs a model key on the server. The sections on
+the key, costs and privacy describe what a real deployment would need.
 
 The five tools are in `server/counsellor/tools.ts`, tested in
 `server/counsellorTools.test.ts`.
@@ -189,10 +191,16 @@ is hit.
 
 ## Evals
 
-One eval set, run two ways: in **AgentFoundry's Evals** (with traces, which
-also shows how we used the official IDE) and as `npm run eval` in the repo so
-anyone can reproduce it. Each case is a short scripted conversation for a seeded
-demo student with a known result.
+**Done for the hackathon:** a 10-case behaviour suite in AgentFoundry's Evals
+(`counsellor/.codenow/agent-studio/evals/hpc-counsellor-behaviour.json`, cases
+in [AF_BUILD.md](../counsellor/AF_BUILD.md#evals)), 10/10 on AF's served model
+after one prompt fix. AF's runner checks one assertion per reply and calls the
+model without tools, so tool use is checked by the unit tests, AF's tool Test
+and the Trace of a live run.
+
+**The full plan before any student uses it:** each case a short conversation
+for a seeded demo student with a known result, graded by code and a model
+judge, on the model the app will use:
 
 | Area | Example case | How it's graded | Bar |
 | --- | --- | --- | --- |
@@ -222,11 +230,11 @@ demo student with a known result.
 For the hackathon (no deployment):
 
 1. ✅ The five tools against `Store` and `shared/careers.ts`, with unit tests.
-2. The agent in AgentFoundry (`counsellor/`), calling those tools through
+2. ✅ The agent in AgentFoundry (`counsellor/`), calling those tools through
    `runTool`, with AF's built-in tools off.
-3. Evals in AgentFoundry; tune the prompt until the bars pass on AF's models.
-4. Screenshots of the agent, a trace and the evals in `docs/af/` for the
-   submission.
+3. ✅ Evals in AgentFoundry, prompt tuned until all 10 pass on AF's model.
+4. ✅ Screenshots of the agent, a tool test, a live run and the evals in
+   `docs/af/`.
 
 If it is ever deployed: bind `/api/chat` to the signed-in student and store
 conversations append-only; run the agent in place of `offlineTurn()` (kept as
