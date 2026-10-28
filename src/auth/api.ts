@@ -50,6 +50,17 @@ export const clearResult = (token: string) => call<{ result: null }>('/results/m
 
 export const classResults = (token: string) => call<{ students: ClassStudent[] }>('/class', {}, token)
 
+/** One step of a student's career journey, as their passbook records it. */
+export type PassbookEntry =
+  | { type: 'test'; at: string; code: RiasecType[]; careerIds: string[] }
+  | { type: 'plan'; at: string; summary: string; careerIds: string[]; nextSteps: string[] }
+  | { type: 'reflection'; at: string; text: string }
+
+export const passbook = (token: string) => call<{ entries: PassbookEntry[] }>('/passbook', {}, token)
+
+export const addReflection = (token: string, text: string) =>
+  call<{ entry: PassbookEntry }>('/passbook/reflections', { method: 'POST', body: JSON.stringify({ text }) }, token)
+
 export function describeError(error: unknown): string {
   switch (error instanceof ApiError ? error.code : '') {
     case 'invalid_credentials':

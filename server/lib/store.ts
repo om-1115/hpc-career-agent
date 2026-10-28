@@ -26,10 +26,19 @@ export type AlertReason = 'distress' | 'safety' | 'other'
 /** A wellbeing flag the counsellor raised; open until a teacher resolves it. */
 export type Alert = { id: string; studentCode: string; reason: AlertReason; note: string; createdAt: string; resolvedAt?: string }
 
+/** A student's own note in their career passbook. */
+export type Reflection = { text: string; createdAt: string }
+
 type Data = {
   accounts: StoredAccount[]
+  /** The current result per student (what the report shows). */
   results: Record<string, TestResult>
+  /** Every result a student has had, oldest first — their passbook keeps all of them. */
+  resultHistory?: Record<string, TestResult[]>
+  /** The latest plan per student (what the teacher acts on). */
   plans?: Record<string, Plan>
+  planHistory?: Record<string, Plan[]>
+  reflections?: Record<string, Reflection[]>
   alerts?: Alert[]
 }
 
@@ -93,11 +102,48 @@ export class Store {
 
   saveResult(studentCode: string, result: TestResult): void {
     const data = this.read()
-    data.results[normaliseCode(studentCode)] = result
+    const code = normaliseCode(studentCode)
+    data.results[code] = result
+    data.resultHistory = { ...data.resultHistory, [code]: [...(data.resultHistory?.[code] ?? []), result] }
     this.write(data)
   }
 
-  /** Clear a result so the student can take the test again. */
+  /** Every result the student has had, oldest first. */
+  resultHistory(studentCode: string): TestResult[] {
+    return this.read().resultHistory?.[normaliseCode(studentCode)] ?? []
+  }
+
+  planHistory(studentCode: string): Plan[] {
+    return this.read().planHistory?.[normaliseCode(studentCode)] ?? []
+  }
+
+  reflections(studentCode: string): Reflection[] {
+    return this.read().reflections?.[normaliseCode(studentCode)] ?? []
+  }
+
+  addReflection(studentCode: string, text: string, createdAt = new Date().toISOString()): Reflection {
+    const data = this.read()
+    const code = normaliseCode(studentCode)
+    const reflection = { text, createdAt }
+    data.reflections = { ...data.reflections, [code]: [...(data.reflections?.[code] ?? []), reflection] }
+    this.write(data)
+    return reflection
+  }
+
+  /** Remove everything career-related for a student (the demo seed starts each one clean). */
+  resetCareerData(studentCode: string): void {
+    const data = this.read()
+    const code = normaliseCode(studentCode)
+    delete data.results[code]
+    delete data.resultHistory?.[code]
+    delete data.plans?.[code]
+    delete data.planHistory?.[code]
+    delete data.reflections?.[code]
+    data.alerts = (data.alerts ?? []).filter((alert) => alert.studentCode !== code)
+    this.write(data)
+  }
+
+  /** Clear the current result so the student can take the test again; the passbook keeps it. */
   clearResult(studentCode: string): void {
     const data = this.read()
     delete data.results[normaliseCode(studentCode)]
@@ -108,10 +154,12 @@ export class Store {
     return this.read().plans?.[normaliseCode(studentCode)] ?? null
   }
 
-  /** Replaces the student's previous plan: the teacher acts on the latest one. */
+  /** The teacher acts on the latest plan; the passbook keeps every one. */
   savePlan(studentCode: string, plan: Plan): void {
     const data = this.read()
-    data.plans = { ...data.plans, [normaliseCode(studentCode)]: plan }
+    const code = normaliseCode(studentCode)
+    data.plans = { ...data.plans, [code]: plan }
+    data.planHistory = { ...data.planHistory, [code]: [...(data.planHistory?.[code] ?? []), plan] }
     this.write(data)
   }
 

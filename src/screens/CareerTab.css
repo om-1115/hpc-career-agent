@@ -323,3 +323,145 @@
   font-size: 12px;
   color: var(--text-body);
 }
+
+/* ---- career passbook ---- */
+.passbook__intro {
+  font-size: var(--size-body-sm);
+  line-height: 19px;
+  color: var(--text-muted);
+}
+
+.passbook__compose {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: var(--space-md);
+  border: 1px solid var(--border-light);
+  border-radius: 16px;
+  background: var(--surface-page);
+}
+
+.passbook__input {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid var(--border-light);
+  border-radius: 12px;
+  font: inherit;
+  font-size: var(--size-body-sm);
+  line-height: 19px;
+  color: var(--text-headings);
+  resize: vertical;
+}
+
+.passbook__input:focus {
+  outline: none;
+  border-color: var(--text-action);
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+}
+
+.passbook__compose-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.passbook__count {
+  font-size: 11px;
+  color: var(--text-muted);
+}
+
+.passbook__compose .chip:disabled {
+  opacity: 0.45;
+}
+
+.passbook__timeline {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+  margin: 4px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+/* The thread that joins the entries. */
+.passbook__timeline::before {
+  content: '';
+  position: absolute;
+  top: 18px;
+  bottom: 18px;
+  left: 17px;
+  width: 2px;
+  background: var(--surface-accent-indigo);
+}
+
+.passbook__entry {
+  position: relative;
+  display: flex;
+  gap: var(--space-md);
+}
+
+.passbook__dot {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border: 2px solid var(--surface-page);
+  border-radius: 50%;
+  background: var(--surface-primary);
+  font-size: 17px;
+  flex-shrink: 0;
+  z-index: 1;
+}
+
+.passbook__entry--plan .passbook__dot {
+  background: var(--surface-accent-green);
+}
+
+.passbook__entry--reflection .passbook__dot {
+  background: var(--surface-accent-orange);
+}
+
+.passbook__body {
+  flex: 1;
+  min-width: 0;
+  padding: 10px 12px;
+  border: 1px solid var(--border-light);
+  border-radius: 14px;
+  background: var(--surface-page);
+}
+
+.passbook__meta {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-muted);
+}
+
+.passbook__title {
+  margin-top: 2px;
+  font-size: var(--size-body-md);
+  font-weight: 600;
+  line-height: 20px;
+  color: var(--text-headings);
+}
+
+.passbook__detail,
+.passbook__steps {
+  margin-top: 2px;
+  font-size: var(--size-body-sm);
+  line-height: 18px;
+  color: var(--text-body);
+}
+
+.passbook__steps {
+  padding-left: 18px;
+}
+
+.passbook__quote {
+  margin-top: 2px;
+  font-size: var(--size-body-sm);
+  font-style: italic;
+  line-height: 19px;
+  color: var(--text-body);
+}

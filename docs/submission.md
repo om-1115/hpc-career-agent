@@ -22,12 +22,18 @@ career options out of about 250, and fewer than 1 in 10 low-income Class 9–12
 students have ever received career guidance. NEP 2020's Holistic Progress Card
 describes the whole child, but stops short of the question every Class 10
 student faces: what next? HPC Career puts that conversation inside the progress
-card, on any phone.
+card, on any phone, and turns it into a career passbook the student keeps from
+Class 9 to 12.
 
 **What you built** *(your solution, key features, and how you used AgentFoundry)*
 
-A mobile-first Holistic Progress Card with career guidance built in, open
-source under MIT:
+A mobile-first Holistic Progress Card that becomes every student's career
+passbook, open source under MIT:
+
+- **Career passbook:** just as a bank passbook records every deposit, it records
+  every step of the career journey from Class 9 to 12 — each test (retakes keep
+  the old one), each plan and the student's own reflections — on one dated
+  timeline, so they decide with evidence, not guesswork.
 
 - **Career test:** 56 questions in about 10 minutes, covering interests
   (Holland's RIASEC; 36 items written for Indian students) and personality (the
@@ -40,8 +46,8 @@ source under MIT:
 - **Counsellor chat:** streaming replies; scripted in the app today.
 - **Teacher view:** who has finished, the class's spread of interests, and each
   student's interest code.
-- Student and teacher sign-in (hashed passwords, lockout, role-gated pages) and
-  22 automated tests.
+- Student and teacher sign-in (hashed passwords, lockout, role-gated pages), 23
+  automated tests and CI on every push.
 
 **How we used AgentFoundry:** *[fill in once the counsellor agent is built and
 evaluated in AF: the agent (Claude Agent SDK kit) in `counsellor/`, its five
@@ -54,7 +60,7 @@ https://github.com/om-1115/hpc-career-agent
 
 **Demo URL (live app or video)**
 
-*[The video is `docs/HPC-Career-Demo.mp4` (2:21, captioned). For judges, upload
+*[The video is `docs/HPC-Career-Demo.mp4` (2:56, captioned). For judges, upload
 it to YouTube (unlisted) or Google Drive and paste that link. The direct GitHub
 link also works but downloads rather than plays in some browsers:
 https://github.com/om-1115/hpc-career-agent/raw/main/docs/HPC-Career-Demo.mp4]*

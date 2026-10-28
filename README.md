@@ -1,10 +1,12 @@
 # HPC Career — Holistic Progress Card with career guidance
 
 A mobile-first **Holistic Progress Card** (the NEP 2020 report card that a
-learner, a teacher and a parent can all read) with a **career guidance journey**
-built in: a short interests-and-personality test, a plain-language career
-report, 36 careers with Indian routes into them, a counsellor chat, and a class
-view for the teacher.
+learner, a teacher and a parent can all read) that becomes every student's
+**career passbook**. Just as a bank passbook records every deposit, it records
+every step of a student's career journey from Class 9 to 12: each test, each
+plan and their own reflections. Built in are a short interests-and-personality
+test, a plain-language career report, 36 careers with Indian routes into them, a
+counsellor chat, and a class view for the teacher.
 
 Built for **Code for a Billion — Bharat Agentic-AI Hackathon 2026**
 (Code for India), impact area **01 · Education**. Open source under MIT.
@@ -13,7 +15,7 @@ Built for **Code for a Billion — Bharat Agentic-AI Hackathon 2026**
 
 **Pitch deck and demo video:** [slides (.pptx)](docs/HPC-Career-Explainer.pptx) ·
 [slides (PDF)](docs/HPC-Career-Explainer.pdf) ·
-[2-minute explainer with a live demo (MP4)](docs/HPC-Career-Demo.mp4) ·
+[3-minute explainer with a live demo (MP4)](docs/HPC-Career-Demo.mp4) ·
 [all screenshots](docs/screens/)
 
 <p>
@@ -46,7 +48,7 @@ npm run dev:all          # app on http://localhost:5173, API on :8787
 | Role    | Code   | Password       |
 | ------- | ------ | -------------- |
 | Student | `S001` | `student-demo` (has not taken the test yet) |
-| Student | `S002`–`S004` | `student-demo` (have results) |
+| Student | `S002`–`S004` | `student-demo` (have results; S002 has a passbook going back to Class 9) |
 | Teacher | `T001` | `teacher-demo` |
 
 These passwords are public. Never run `seed:demo` against real student data.
@@ -61,9 +63,25 @@ These passwords are public. Never run `seed:demo` against real student data.
    to each from Class 10, and next steps. It prints as a PDF for parents.
 4. **Explores careers** — all 36, sorted by fit or filtered by type.
 5. **Asks the counsellor** about streams, subjects and exams.
+6. **Keeps a career passbook** — every test (a retake keeps the old one), every
+   plan and their own reflections, on one dated timeline. They come back each
+   year, see how they have grown, and decide with evidence, not guesswork.
 
 A **teacher** sees who in the class has finished, each student's interest code,
 and where the class's interests lie.
+
+## How this meets the judging criteria
+
+Code for a Billion scores four criteria, 25% each
+([rubric](https://github.com/karlmehta/code-for-a-billion/blob/main/JUDGING.md)).
+The evidence for each, in this repository:
+
+| Criterion | Evidence |
+| --- | --- |
+| **Size of the problem** | 24.8 crore students in Indian schools (UDISE+ 2023-24), and every one of them faces a stream decision around Class 10. The app runs on any phone browser, including shared classroom phones. |
+| **Severity of the problem** | 93% of 10,000 students surveyed knew only 7 of about 250 career options (Mindler, 2019). Only 9.36% of low-income Class 9–12 students had ever had career guidance, and family members (30%) and teachers (13%) were the top influences (Bharat Career Aspiration Report 2024). The choice sets a student's next decade of study and work. |
+| **Quality of the solution** | A complete journey — test, report, careers with Indian routes, passbook, counsellor, teacher view — built on Holland's RIASEC model and the public-domain Mini-IPIP, scored on the server, with strength-based wording and honest limits ([the test, honestly](#the-test-honestly)). Hashed passwords, a 5-try lock, role-gated pages, 23 automated tests and CI on every push. The counsellor's AI agent is designed and its tools are built and tested ([design](docs/counsellor-agent.md)). |
+| **Proven impact** | Not deployed for this hackathon, so there is no field data yet. The repository runs in two commands with a seeded demo school, and the [deck](docs/HPC-Career-Explainer.pdf) sets out what a pilot would measure: students who finish, reports discussed at home, and teacher use in subject choice. |
 
 ## The test, honestly
 

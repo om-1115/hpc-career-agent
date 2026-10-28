@@ -43,11 +43,27 @@ function answersFor(likes: RiasecType[], seed: number): Answers {
   return answers
 }
 
+const daysAgo = (days: number) => new Date(Date.now() - days * 24 * 60 * 60 * 1000).toISOString()
+
 students.forEach(({ code, name, likes }, index) => {
   store.upsert({ role: 'student', code, name, classLine: 'Class 10 · A' }, DEMO_STUDENT_PASSWORD)
+  store.resetCareerData(code)
   // Three students have finished, so the teacher's view has something to show.
-  if (likes) store.saveResult(code, scoreTest(answersFor(likes, index)))
-  else store.clearResult(code)
+  // Rohan's results are dated, below.
+  if (likes && code !== 'S002') store.saveResult(code, scoreTest(answersFor(likes, index)))
+})
+
+// Rohan's passbook shows a journey: a test in Class 9, reflections, a plan,
+// and this year's test, where his interests have grown towards Investigative.
+store.saveResult('S002', scoreTest(answersFor(['R'], 1), daysAgo(380)))
+store.addReflection('S002', 'Fixing my uncle’s motorbike was the best part of the holidays. I like seeing a machine work again.', daysAgo(370))
+store.addReflection('S002', 'Science fair: I liked figuring out why the circuit failed even more than building it.', daysAgo(120))
+store.saveResult('S002', scoreTest(answersFor(['I', 'R'], 1), daysAgo(14)))
+store.savePlan('S002', {
+  summary: 'Take Science (PCM) in Class 11 and explore electrical and civil engineering.',
+  careerIds: ['civil-engineer', 'electrician'],
+  nextSteps: ['Talk to an electrician about their work', 'Ask my teacher about PCM', 'Visit the polytechnic open day'],
+  savedAt: daysAgo(7),
 })
 
 console.log(

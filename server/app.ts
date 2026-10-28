@@ -6,6 +6,8 @@
  *   GET    /api/results/me     the student's saved result, or null
  *   POST   /api/results        {answers} → scored and saved result (students)
  *   DELETE /api/results/me     clear it to take the test again (students)
+ *   GET    /api/passbook       the student's career passbook: tests, plans, reflections
+ *   POST   /api/passbook/reflections  {text} → a reflection added to it
  *   GET    /api/class          every student and whether they finished (teachers)
  *   POST   /api/chat/session   a signed conversation handle
  *   POST   /api/chat           {handle, text} → the counsellor's reply as SSE
@@ -91,6 +93,33 @@ export function createApp({ dataFile, sessionSecret }: AppConfig) {
   app.delete('/api/results/me', requireRole('student'), (req, res) => {
     store.clearResult((req as Authed).profile.code)
     res.json({ result: null })
+  })
+
+  // The career passbook: everything the student has done on their journey,
+  // newest first — each test, each plan, and their own reflections.
+  app.get('/api/passbook', requireRole('student'), (req, res) => {
+    const code = (req as Authed).profile.code
+    const tests = store.resultHistory(code)
+    const current = store.result(code)
+    // Results saved before history was kept are still part of the journey.
+    if (current && !tests.some((test) => test.completedAt === current.completedAt)) tests.push(current)
+    const entries = [
+      ...tests.map((test) => ({ type: 'test' as const, at: test.completedAt, code: test.code, careerIds: test.matches.slice(0, 3).map((match) => match.id) })),
+      ...store.planHistory(code).map((plan) => ({ type: 'plan' as const, at: plan.savedAt, summary: plan.summary, careerIds: plan.careerIds, nextSteps: plan.nextSteps })),
+      ...store.reflections(code).map((reflection) => ({ type: 'reflection' as const, at: reflection.createdAt, text: reflection.text })),
+    ]
+    // Newest first. Same-instant ties keep a fixed order: a reflection is
+    // written about the plan or test it sits next to, so it goes on top.
+    const rank = { reflection: 0, plan: 1, test: 2 }
+    entries.sort((a, b) => b.at.localeCompare(a.at) || rank[a.type] - rank[b.type])
+    res.json({ entries })
+  })
+
+  app.post('/api/passbook/reflections', requireRole('student'), (req, res) => {
+    const text = typeof req.body?.text === 'string' ? req.body.text.trim() : ''
+    if (!text || text.length > 500) return res.status(400).json({ error: 'text must be 1–500 characters' })
+    const reflection = store.addReflection((req as Authed).profile.code, text)
+    res.json({ entry: { type: 'reflection', at: reflection.createdAt, text: reflection.text } })
   })
 
   app.get('/api/class', requireRole('teacher'), (_req, res) => {

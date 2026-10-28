@@ -88,6 +88,36 @@ test('a student submits answers; the server scores, saves and returns them', asy
   assert.deepEqual(await (await call('/results/me', { token: student })).json(), { result: null })
 })
 
+test('the passbook keeps every test, plan and reflection, newest first, for that student only', async (t) => {
+  const { server, call, token } = await start()
+  t.after(() => server.close())
+  const student = await token('student', 'S001', 'student-pass')
+  const teacher = await token('teacher', 'T001', 'teacher-pass')
+
+  assert.deepEqual(await (await call('/passbook', { token: student })).json(), { entries: [] })
+  assert.equal((await call('/passbook', { token: teacher })).status, 403)
+
+  // Two tests (a retake keeps the first), then a reflection — a few ms apart,
+  // so the order checked below is real chronology, not a timestamp tie.
+  const tick = () => new Promise((resolve) => setTimeout(resolve, 5))
+  await call('/results', { method: 'POST', token: student, body: JSON.stringify({ answers: allAnswers(2) }) })
+  await tick()
+  await call('/results/me', { method: 'DELETE', token: student })
+  await call('/results', { method: 'POST', token: student, body: JSON.stringify({ answers: allAnswers(4) }) })
+  await tick()
+  const added = await call('/passbook/reflections', { method: 'POST', token: student, body: JSON.stringify({ text: '  I enjoy helping people more than I thought.  ' }) })
+  assert.equal(added.status, 200)
+
+  for (const text of ['', 'x'.repeat(501)]) {
+    assert.equal((await call('/passbook/reflections', { method: 'POST', token: student, body: JSON.stringify({ text }) })).status, 400)
+  }
+
+  const { entries } = (await (await call('/passbook', { token: student })).json()) as { entries: { type: string; at: string; text?: string }[] }
+  assert.deepEqual(entries.map((entry) => entry.type), ['reflection', 'test', 'test'])
+  assert.equal(entries[0].text, 'I enjoy helping people more than I thought.')
+  assert.ok(entries[1].at >= entries[2].at)
+})
+
 test('incomplete answers are refused', async (t) => {
   const { server, call, token } = await start()
   t.after(() => server.close())

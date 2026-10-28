@@ -7,6 +7,7 @@ import { SectionHeader } from '../components/SectionHeader'
 import { Badge } from '../components/Badge'
 import type { TestResult } from '../../shared/scoring'
 import { careerById, CodeLetters, InterestBars, TraitLevels } from './reportParts'
+import { Passbook } from './Passbook'
 import './CareerTab.css'
 import './test.css'
 
@@ -104,6 +105,8 @@ export function CareerTab({ session }: { session: Session }) {
           </div>
         )}
       </section>
+
+      <Passbook session={session} />
 
       <section className="screen__section">
         <SectionHeader title="Explore" />
