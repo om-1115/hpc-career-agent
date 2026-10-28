@@ -9,6 +9,23 @@ view for the teacher.
 Built for **Code for a Billion — Bharat Agentic-AI Hackathon 2026**
 (Code for India), impact area **01 · Education**. Open source under MIT.
 
+**Pitch deck and demo video:** [slides (.pptx)](docs/HPC-Career-Explainer.pptx) ·
+[slides (PDF)](docs/HPC-Career-Explainer.pdf) ·
+[2-minute explainer with a live demo (MP4)](docs/HPC-Career-Demo.mp4) ·
+[screenshots](docs/screens/)
+
+## Why
+
+| | |
+| --- | --- |
+| **24.8 crore** | students in Indian schools (UDISE+ 2023-24) |
+| **93%** | of 10,000 students surveyed knew only 7 career options, out of about 250 (Mindler, 2019) |
+| **< 1 in 10** | low-income Class 9–12 students had ever received career guidance — 9.36% (Bharat Career Aspiration Report 2024, UNICEF YuWaah & iDreamCareer) |
+
+The stream decision comes at 15, mostly on advice from home. NEP 2020's
+Holistic Progress Card describes the whole child, but stops short of the
+question every Class 10 student faces: *what next?*
+
 ## Try it
 
 ```bash
