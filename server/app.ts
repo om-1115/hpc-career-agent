@@ -2,6 +2,8 @@
  * The API. Everything the app needs lives under /api:
  *
  *   POST   /api/login          {role, code, password} → {profile, token}
+ *   GET    /api/profiles       every profile, for the profile picker
+ *   POST   /api/profiles/open  {role, code} → {profile, token}, no password (for now)
  *   GET    /api/me             who the token belongs to
  *   GET    /api/results/me     the student's saved result, or null
  *   POST   /api/results        {answers} → scored and saved result (students)
@@ -67,6 +69,23 @@ export function createApp({ dataFile, sessionSecret }: AppConfig) {
     }
 
     failures.delete(key)
+    res.json({ profile, token: issueSigned(profile, sessionSecret, SESSION_TTL_MS) })
+  })
+
+  // Open profiles, for now: the app starts on a list of profiles and opens one
+  // with a tap, no password. /api/login above keeps password sign-in for when
+  // the app goes to a school.
+  app.get('/api/profiles', (_req, res) => {
+    res.json({ profiles: store.profiles() })
+  })
+
+  app.post('/api/profiles/open', (req, res) => {
+    const { role, code } = (req.body ?? {}) as Record<string, unknown>
+    if ((role !== 'student' && role !== 'teacher') || typeof code !== 'string' || !code.trim()) {
+      return res.status(400).json({ error: 'profile_required' })
+    }
+    const profile = store.profile(role, code)
+    if (!profile) return res.status(404).json({ error: 'no_such_profile' })
     res.json({ profile, token: issueSigned(profile, sessionSecret, SESSION_TTL_MS) })
   })
 

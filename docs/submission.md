@@ -50,8 +50,9 @@ passbook, open source under MIT:
   scripted; plugging the agent in needs a model key.)
 - **Teacher view:** who has finished, the class's spread of interests, and each
   student's interest code.
-- Student and teacher sign-in (hashed passwords, lockout, role-gated pages), 23
-  automated tests and CI on every push.
+- Student and teacher profiles that open with one tap (password sign-in is
+  ready in the API for schools), role-gated pages, 24 automated tests and CI on
+  every push.
 
 **How we used AgentFoundry:** we built the counsellor agent in AF
 (`counsellor/`, screenshots in `docs/af/`):

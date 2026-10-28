@@ -71,7 +71,7 @@ function ClassCareers({ session }: { session: Session }) {
     classResults(session.token)
       .then(({ students }) => setStudents(students))
       .catch((cause) => {
-        if (cause instanceof ApiError && cause.status === 401) return signOut('Your session ended. Sign in again.')
+        if (cause instanceof ApiError && cause.status === 401) return signOut('Your session ended. Choose your profile again.')
         setError('Couldn’t load the class. Check your connection and try again.')
       })
   }, [session.token, signOut])

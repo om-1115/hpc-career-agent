@@ -71,7 +71,7 @@ export default function TestScreen() {
       sessionStorage.removeItem(DRAFT_KEY)
       navigate('/student/report', { replace: true })
     } catch (cause) {
-      if (cause instanceof ApiError && cause.status === 401) return signOut('Your session ended. Sign in again — your answers were kept on this tab only until now.')
+      if (cause instanceof ApiError && cause.status === 401) return signOut('Your session ended. Choose your profile again — your answers were kept on this tab only until now.')
       setError(describeError(cause))
       setBusy(false)
     }

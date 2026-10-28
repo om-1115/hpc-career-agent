@@ -31,7 +31,7 @@ export function MenuDrawer({ open, onClose, profile, onSignOut }: Props) {
         <span className="sr-only">Close menu</span>
       </button>
       <aside className="drawer__panel" aria-label="Your profile">
-        <p className="drawer__eyebrow">Signed in as</p>
+        <p className="drawer__eyebrow">Your profile</p>
         <div className="drawer__item drawer__item--active">
           <span className="drawer__item-emoji" aria-hidden="true">
             {profile.emoji}
@@ -49,7 +49,7 @@ export function MenuDrawer({ open, onClose, profile, onSignOut }: Props) {
             onSignOut()
           }}
         >
-          Sign out
+          Switch profile
         </button>
       </aside>
     </div>

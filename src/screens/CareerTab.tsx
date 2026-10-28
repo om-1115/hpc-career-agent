@@ -31,7 +31,7 @@ export function CareerTab({ session }: { session: Session }) {
     myResult(session.token)
       .then(({ result }) => setResult(result))
       .catch((cause) => {
-        if (cause instanceof ApiError && cause.status === 401) return signOut('Your session ended. Sign in again.')
+        if (cause instanceof ApiError && cause.status === 401) return signOut('Your session ended. Choose your profile again.')
         setError('Couldn’t load your results. Check your connection and try again.')
       })
   }, [session.token, signOut])

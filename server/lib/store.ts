@@ -92,6 +92,18 @@ export class Store {
     this.write(data)
   }
 
+  /** Every account, students first, for the profile picker. */
+  profiles(): Profile[] {
+    const accounts = this.read().accounts.map(profileOf)
+    return [...accounts.filter((account) => account.role === 'student'), ...accounts.filter((account) => account.role === 'teacher')]
+  }
+
+  /** One account by role and code, without checking a password. */
+  profile(role: Role, code: string): Profile | null {
+    const found = this.read().accounts.find((account) => account.role === role && account.code === normaliseCode(code))
+    return found ? profileOf(found) : null
+  }
+
   students(): Profile[] {
     return this.read().accounts.filter((account) => account.role === 'student').map(profileOf)
   }

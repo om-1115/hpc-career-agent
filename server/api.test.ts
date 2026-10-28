@@ -60,6 +60,24 @@ test('sign-in: right role and password only, same answer for every wrong combina
   for (const response of [wrongPassword, wrongCode, wrongRole]) assert.equal(response.status, 401)
 })
 
+test('profiles: listed without passwords, and one opens with a tap', async (t) => {
+  const { server, call } = await start()
+  t.after(() => server.close())
+
+  const { profiles } = (await (await call('/profiles')).json()) as { profiles: Record<string, unknown>[] }
+  assert.deepEqual(profiles.map((profile) => [profile.role, profile.code]), [['student', 'S001'], ['teacher', 'T001']])
+  assert.ok(profiles.every((profile) => !('password' in profile)))
+
+  const opened = await call('/profiles/open', { method: 'POST', body: JSON.stringify({ role: 'student', code: 's001' }) })
+  assert.equal(opened.status, 200)
+  const { token } = (await opened.json()) as { token: string }
+  assert.equal((await call('/results/me', { token })).status, 200)
+  assert.equal((await call('/class', { token })).status, 403)
+
+  assert.equal((await call('/profiles/open', { method: 'POST', body: JSON.stringify({ role: 'teacher', code: 'S001' }) })).status, 404)
+  assert.equal((await call('/profiles/open', { method: 'POST', body: JSON.stringify({ role: 'admin', code: 'S001' }) })).status, 400)
+})
+
 test('five misses lock an account, even against the right password', async (t) => {
   const { server, login } = await start()
   t.after(() => server.close())

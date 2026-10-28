@@ -45,17 +45,23 @@ npm run seed:demo        # demo school: 1 teacher, 5 students (3 have taken the 
 npm run dev:all          # app on http://localhost:5173, API on :8787
 ```
 
-| Role    | Code   | Password       |
-| ------- | ------ | -------------- |
-| Student | `S001` | `student-demo` (has not taken the test yet) |
-| Student | `S002`–`S004` | `student-demo` (have results; S002 has a passbook going back to Class 9) |
-| Teacher | `T001` | `teacher-demo` |
+The app opens on **Choose your profile**: tap one, no password needed.
 
-These passwords are public. Never run `seed:demo` against real student data.
+| Profile | What's there |
+| ------- | ------------ |
+| Asha Kumari (`S001`) | hasn't taken the test yet: start here for the whole journey |
+| Rohan Verma (`S002`) | a result and a passbook going back to Class 9 |
+| Priya Nair, Imran Khan (`S003`, `S004`) | results to explore |
+| Meera Sharma (`T001`) | the teacher's class view |
+
+Profiles open without a password for now, so never run `seed:demo` against
+real student data. Password sign-in is still built into the API
+(`/api/login`: hashed passwords and a 5-try lock) for when the app goes to a
+school.
 
 ## What a student does
 
-1. **Signs in** with the code and password the school gave them.
+1. **Picks their profile** (for now; a school would add their password).
 2. **Takes the career test** — 56 questions, about 10 minutes, one per screen.
    Progress is kept on the device, so a reload or a phone call costs nothing.
 3. **Reads their report** — their interest code (e.g. *Creator · Helper ·
@@ -80,7 +86,7 @@ The evidence for each, in this repository:
 | --- | --- |
 | **Size of the problem** | 24.8 crore students in Indian schools (UDISE+ 2023-24), and every one of them faces a stream decision around Class 10. The app runs on any phone browser, including shared classroom phones. |
 | **Severity of the problem** | 93% of 10,000 students surveyed knew only 7 of about 250 career options (Mindler, 2019). Only 9.36% of low-income Class 9–12 students had ever had career guidance, and family members (30%) and teachers (13%) were the top influences (Bharat Career Aspiration Report 2024). The choice sets a student's next decade of study and work. |
-| **Quality of the solution** | A complete journey — test, report, careers with Indian routes, passbook, counsellor, teacher view — built on Holland's RIASEC model and the public-domain Mini-IPIP, scored on the server, with strength-based wording and honest limits ([the test, honestly](#the-test-honestly)). Hashed passwords, a 5-try lock, role-gated pages, 23 automated tests and CI on every push. The counsellor agent is built in AgentFoundry, with its tools wired to the app's tested code and a 10-case eval suite that passes ([the agent](#the-counsellor-agent-built-in-agentfoundry)). |
+| **Quality of the solution** | A complete journey — test, report, careers with Indian routes, passbook, counsellor, teacher view — built on Holland's RIASEC model and the public-domain Mini-IPIP, scored on the server, with strength-based wording and honest limits ([the test, honestly](#the-test-honestly)). Signed sessions, role-gated pages, password sign-in ready in the API, 24 automated tests and CI on every push. The counsellor agent is built in AgentFoundry, with its tools wired to the app's tested code and a 10-case eval suite that passes ([the agent](#the-counsellor-agent-built-in-agentfoundry)). |
 | **Proven impact** | Not deployed for this hackathon, so there is no field data yet. The repository runs in two commands with a seeded demo school, and the [deck](docs/HPC-Career-Explainer.pdf) sets out what a pilot would measure: students who finish, reports discussed at home, and teacher use in subject choice. |
 
 ## The test, honestly
@@ -144,8 +150,10 @@ counsellor/   the counsellor agent, built in AgentFoundry (Claude Agent SDK, fiv
 src/          React 19 + Vite app: v1 Holistic Progress Card screens + the career journey
 ```
 
-- **Accounts** are scrypt-hashed in one JSON file under `.data/` (git-ignored).
-  Five wrong passwords lock an account for 15 minutes. Add accounts with
+- **Profiles** are in one JSON file under `.data/` (git-ignored). The app
+  opens them from a list for now (`/api/profiles`); password sign-in
+  (`/api/login`) keeps scrypt hashes and locks an account for 15 minutes
+  after five wrong passwords. Add accounts with
   `npm run account:add -- student S010 "Name" "Class 10 · A"`.
 - **Sessions** are HMAC-signed tokens kept in the tab only (`sessionStorage`),
   because classroom phones are shared. Each role's pages are gated to it.

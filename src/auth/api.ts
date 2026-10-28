@@ -41,7 +41,12 @@ async function call<T>(path: string, init: RequestInit = {}, token?: string): Pr
 export const login = (role: Role, code: string, password: string) =>
   call<{ profile: Profile; token: string }>('/login', { method: 'POST', body: JSON.stringify({ role, code, password }) })
 
-export const myResult = (token: string) => call<{ result: TestResult | null }>('/results/me', {}, token)
+export const listProfiles = () => call<{ profiles: Profile[] }>('/profiles')
+
+export const openProfile = (role: Role, code: string) =>
+  call<{ profile: Profile; token: string }>('/profiles/open', { method: 'POST', body: JSON.stringify({ role, code }) })
+
+export const myResult =(token: string) => call<{ result: TestResult | null }>('/results/me', {}, token)
 
 export const submitAnswers = (token: string, answers: Answers) =>
   call<{ result: TestResult }>('/results', { method: 'POST', body: JSON.stringify({ answers }) }, token)
@@ -69,6 +74,8 @@ export function describeError(error: unknown): string {
       return 'Too many tries. This account is locked for 15 minutes.'
     case 'credentials_required':
       return 'Fill in your code and password.'
+    case 'no_such_profile':
+      return 'That profile isn’t here any more. Pick another one.'
     case 'unreachable':
       return 'Can’t reach the server. Check your connection and try again.'
     default:
