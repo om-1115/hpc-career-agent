@@ -48,6 +48,9 @@ passbook, open source under MIT:
   from Class 10, save a plan only after the student agrees, and alert the
   teacher if a student is in distress. (The chat screen in the app is still
   scripted; plugging the agent in needs a model key.)
+- **Live HPC:** the student's progress card for the term so far — about me,
+  their reflections, projects, and how each competency is growing term by term
+  (projects and competencies are sample content until a school records them).
 - **Teacher view:** who has finished, the class's spread of interests, and each
   student's interest code.
 - Student and teacher profiles that open with one tap (password sign-in is

@@ -1,0 +1,402 @@
+/* Live HPC (Figma "Student · My Record", screens 15 and 20): lettered part
+   cards, competency step bars and an over-time chart, on the app's tokens. */
+
+.hpc-record {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+}
+
+.hpc-record__term {
+  align-self: flex-start;
+  padding: 6px var(--space-md);
+  border-radius: var(--radius-lg);
+  background: var(--surface-primary);
+  font-size: var(--size-body-sm);
+  font-weight: 500;
+  color: #1e3a8a;
+}
+
+.hpc-record__list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+}
+
+/* A part of the card: letter badge, title, one line of status. */
+.hpc-record__part {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+  width: 100%;
+  padding: var(--space-md);
+  border: 1px solid var(--border-light);
+  border-radius: 12px;
+  background: var(--surface-page);
+  text-align: left;
+}
+
+.hpc-record__part:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
+
+.hpc-record__letter {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 30px;
+  height: 30px;
+  border-radius: 6px;
+  background: var(--surface-muted);
+  font-size: var(--size-body-md);
+  font-weight: 700;
+  color: #4e5ba6;
+}
+
+.hpc-record__part-text {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.hpc-record__part-title {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--text-headings);
+}
+
+.hpc-record__part-detail {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+  font-size: var(--size-body-sm);
+  color: var(--text-muted);
+}
+
+.hpc-record__chevron {
+  font-size: 20px;
+  line-height: 1;
+  color: var(--text-muted);
+}
+
+.hpc-record__part--warning {
+  border-color: #fed7aa;
+  background: #fffbeb;
+}
+
+.hpc-record__part--warning .hpc-record__letter {
+  background: #fef3c7;
+  color: #d97706;
+}
+
+.hpc-record__part--warning .hpc-record__part-title {
+  color: #78350f;
+}
+
+.hpc-record__part--warning .hpc-record__part-detail,
+.hpc-record__part--warning .hpc-record__chevron {
+  font-weight: 500;
+  color: var(--text-warning);
+}
+
+.hpc-record__part--active {
+  border: 2px solid var(--text-action);
+  background: var(--surface-primary);
+  padding: 11px;
+}
+
+.hpc-record__part--active .hpc-record__letter {
+  background: var(--text-action);
+  color: var(--text-on-action);
+}
+
+.hpc-record__part--active .hpc-record__part-title {
+  font-weight: 700;
+  color: #1e3a8a;
+}
+
+.hpc-record__part--active .hpc-record__part-detail,
+.hpc-record__part--active .hpc-record__chevron {
+  font-weight: 500;
+  color: var(--text-action);
+}
+
+.hpc-record__icon {
+  flex-shrink: 0;
+  width: 16px;
+  height: 16px;
+}
+
+.hpc-record__note {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: var(--space-md);
+  border: 1px solid #bfdbfe;
+  border-radius: var(--radius-lg);
+  background: var(--surface-primary);
+  font-size: 12px;
+  line-height: 16px;
+  color: #1e3a8a;
+}
+
+.hpc-record__icon--info {
+  width: 20px;
+  height: 20px;
+  color: var(--text-action);
+}
+
+/* Detail pages: back, title, then panels. */
+.hpc-record__detail-head {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+  padding-bottom: var(--space-xs);
+}
+
+.hpc-record__back {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 36px;
+  height: 36px;
+  border: 1px solid var(--border-light);
+  border-radius: 50%;
+  background: var(--surface-page);
+  font-size: 18px;
+  color: var(--text-headings);
+}
+
+.hpc-record__detail-title {
+  font-size: 20px;
+  font-weight: 700;
+  line-height: 26px;
+  color: var(--text-headings);
+}
+
+.hpc-record__detail-subtitle {
+  font-size: var(--size-body-sm);
+  color: var(--text-muted);
+}
+
+.hpc-record__eyebrow {
+  margin-top: var(--space-xs);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+.hpc-record__panel {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+  padding: var(--space-lg);
+  border: 1px solid var(--border-light);
+  border-radius: 12px;
+  background: var(--surface-page);
+  box-shadow: var(--shadow-card-v2);
+}
+
+.hpc-record__panel-label {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--text-headings);
+}
+
+.hpc-record__panel-text {
+  font-size: var(--size-body-md);
+  line-height: var(--lh-body-md);
+  color: var(--text-body);
+}
+
+.hpc-record__link {
+  align-self: flex-start;
+  font-size: var(--size-body-sm);
+  font-weight: 600;
+  color: var(--text-action);
+}
+
+.hpc-record__primary {
+  height: 48px;
+  border-radius: var(--radius-pill);
+  background: var(--text-action);
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--text-on-action);
+}
+
+/* Four-step level bars. */
+.hpc-record__steps {
+  display: grid;
+  grid-auto-columns: 1fr;
+  grid-auto-flow: column;
+  gap: 4px;
+}
+
+.hpc-record__step {
+  height: 6px;
+  border-radius: var(--radius-pill);
+  background: var(--surface-tertiary);
+}
+
+.hpc-record__steps--success .hpc-record__step--done {
+  background: var(--text-success);
+}
+
+.hpc-record__steps--warning .hpc-record__step--done {
+  background: var(--text-warning);
+}
+
+.hpc-record__steps--action .hpc-record__step--done {
+  background: var(--text-action);
+}
+
+.hpc-record__competency {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: var(--space-md) var(--space-lg);
+  border: 1px solid var(--border-light);
+  border-radius: 12px;
+  background: var(--surface-page);
+  text-align: left;
+}
+
+.hpc-record__competency-head,
+.hpc-record__now-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-md);
+}
+
+.hpc-record__competency-name {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--text-headings);
+}
+
+.hpc-record__level {
+  font-size: var(--size-body-sm);
+  font-weight: 600;
+}
+
+.hpc-record__level--proficient,
+.hpc-record__level--advanced,
+.hpc-record__now-level--proficient,
+.hpc-record__now-level--advanced {
+  color: var(--text-success);
+}
+
+.hpc-record__level--developing,
+.hpc-record__level--beginning,
+.hpc-record__now-level--developing,
+.hpc-record__now-level--beginning {
+  color: var(--text-warning);
+}
+
+.hpc-record__now-level {
+  font-size: 20px;
+  font-weight: 700;
+}
+
+.hpc-record__now-level--proficient,
+.hpc-record__now-level--advanced {
+  color: var(--text-accent-green);
+}
+
+.hpc-record__step-chip {
+  padding: 2px var(--space-sm);
+  border-radius: var(--radius-badge);
+  background: var(--surface-accent-green);
+  font-size: var(--size-body-sm);
+  font-weight: 500;
+  color: var(--text-accent-green);
+}
+
+/* Over time: one bar per term, the latest in solid blue. */
+.hpc-record__chart {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  padding-bottom: var(--space-md);
+  border-bottom: 1px solid var(--border-light);
+}
+
+.hpc-record__bar-col {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+}
+
+/* Full height is the top step (Advanced), so bars compare across terms. */
+.hpc-record__bar-track {
+  display: flex;
+  align-items: flex-end;
+  height: 100px;
+}
+
+.hpc-record__bar {
+  width: 32px;
+  border-radius: 2px;
+  background: #bfdbfe;
+}
+
+.hpc-record__bar--latest {
+  background: var(--text-action);
+}
+
+.hpc-record__bar-label {
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+.hpc-record__bar-label--latest {
+  font-weight: 600;
+  color: var(--text-headings);
+}
+
+.hpc-record__trend {
+  font-size: var(--size-body-sm);
+}
+
+.hpc-record__sources {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.hpc-record__source {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: var(--space-md);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-lg);
+  background: var(--surface-page);
+}
+
+.hpc-record__source-title {
+  font-size: var(--size-body-md);
+  font-weight: 600;
+  color: var(--text-headings);
+}
+
+.hpc-record__source--text .hpc-record__source-title {
+  font-weight: 400;
+  line-height: var(--lh-body-md);
+  color: var(--text-body);
+}
+
+.hpc-record__source-meta {
+  font-size: 12px;
+  color: var(--text-muted);
+}

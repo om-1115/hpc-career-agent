@@ -23,6 +23,7 @@ Built for **Code for a Billion — Bharat Agentic-AI Hackathon 2026**
   <img src="docs/screens/08-report-top.png" width="200" alt="A career report: You're a Doer and a Thinker, with interest bars">
   <img src="docs/screens/11-explore-careers.png" width="200" alt="Explore careers, sorted by best fit, each with the route from Class 10">
   <img src="docs/screens/14-teacher-class.png" width="200" alt="The teacher's class view: who has finished and each student's interest code">
+  <img src="docs/screens/17-live-hpc.png" width="200" alt="Live HPC: the student's progress card for the term, parts A to F">
 </p>
 
 ## Why
@@ -72,6 +73,11 @@ school.
 6. **Keeps a career passbook** — every test (a retake keeps the old one), every
    plan and their own reflections, on one dated timeline. They come back each
    year, see how they have grown, and decide with evidence, not guesswork.
+7. **Opens Live HPC** — their progress card for the term so far, in six parts
+   (About me, What I said, My projects, How I'm growing, What my teacher said,
+   Summary), with each competency's level and how it has grown term by term.
+   About me and What I said come from their own test and reflections; projects
+   and competencies are sample content until a school records them.
 
 A **teacher** sees who in the class has finished, each student's interest code,
 and where the class's interests lie.

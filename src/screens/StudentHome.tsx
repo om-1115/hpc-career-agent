@@ -2,10 +2,10 @@ import { useState } from 'react'
 import { Screen } from '../components/Screen'
 import { SectionHeader } from '../components/SectionHeader'
 import { SurveyRow } from '../components/SurveyRow'
-import { ComingSoon } from '../components/ComingSoon'
 import { greeting, useAuth } from '../auth/AuthProvider'
 import { studentSurveys } from '../data/content'
 import { CareerTab } from './CareerTab'
+import { LiveHpcTab } from './LiveHpcTab'
 import './CareerTab.css'
 
 const navItems = [
@@ -14,7 +14,7 @@ const navItems = [
   { id: 'live-hpc', label: 'Live HPC', icon: '/assets/icon-file.svg' },
 ]
 
-/** v1's student home (Figma 1:1518), with the Career tab added. */
+/** v1's student home (Figma 1:1518), with the Career and Live HPC tabs. */
 export default function StudentHome() {
   const { session } = useAuth()
   // The tab survives a trip to the test or report and back.
@@ -58,7 +58,7 @@ export default function StudentHome() {
         </>
       )}
       {activeNavId === 'career' && <CareerTab session={session} />}
-      {activeNavId === 'live-hpc' && <ComingSoon title="Live HPC" />}
+      {activeNavId === 'live-hpc' && <LiveHpcTab session={session} onOpenCareer={() => select('career')} />}
     </Screen>
   )
 }
