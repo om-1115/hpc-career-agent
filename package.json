@@ -10,9 +10,13 @@
     "dev:all": "npm run dev:server & npm run dev",
     "build": "tsc -b && vite build",
     "server": "tsx server/index.ts",
+    "start:demo": "npm run seed:demo && npm run server",
     "account:add": "tsx server/scripts/addAccount.ts",
     "seed:demo": "tsx server/scripts/seedDemo.ts",
     "test": "tsx --test shared/*.test.ts server/*.test.ts"
+  },
+  "engines": {
+    "node": ">=22"
   },
   "dependencies": {
     "express": "^5.2.1",

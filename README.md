@@ -60,6 +60,16 @@ real student data. Password sign-in is still built into the API
 (`/api/login`: hashed passwords and a 5-try lock) for when the app goes to a
 school.
 
+### Run it on Render
+
+[![Deploy to Render](https://render.com/images/deploy-to-render-button.svg)](https://render.com/deploy?repo=https://github.com/om-1115/hpc-career-agent)
+
+[`render.yaml`](render.yaml) sets up one free Node web service that builds the
+app and serves it with its API. Every start re-seeds the demo school
+(`npm run start:demo`), so visitors always find it clean, and anything they do
+is wiped on the next restart. No API key is needed. Free services sleep when
+idle, so the first visit can take about 30 seconds.
+
 ## What a student does
 
 1. **Picks their profile** (for now; a school would add their password).

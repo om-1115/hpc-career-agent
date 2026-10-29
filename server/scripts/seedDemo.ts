@@ -68,5 +68,5 @@ store.savePlan('S002', {
 
 console.log(
   `Seeded teacher T001 and students ${students.map((student) => student.code).join(', ')} ` +
-    `(${INTEREST_ITEMS.length} interest items; passwords in the README).`,
+    `(${INTEREST_ITEMS.length} interest items; profiles open from the list, no password).`,
 )
