@@ -109,6 +109,17 @@ only 9.36% had ever received career guidance, and family members (30%) and
 teachers (13%) were the top influences on career choice. A stream chosen
 without guidance shapes a student's next decade of study and work.
 
+What it costs: Classes 9–10, where the stream is chosen, lose more students
+than any other stage of school: 7.0% of secondary students dropped out in
+2025-26 (UDISE+ 2025-26, Ministry of Education; down from 13.8% in 2022-23).
+And India's unemployment is young and educated. In 2022, 82.9% of the
+unemployed were aged 15–29, 65.7% were young people with secondary education
+or more, and a young graduate was about nine times as likely to be unemployed
+(29.1%) as a young person who cannot read or write (3.4%) (India Employment
+Report 2024, IHD and ILO). Guidance won't fix the job market, but a student who
+knows the route from Class 10 to a job can choose a stream on purpose rather
+than by default.
+
 We saw this first-hand in the Holistic Progress Card pilot in Kangra, Himachal
 Pradesh (GSSS Kachhiari and GSSS Khaniara). A Grade 9 student filled in "Which
 stream will you choose?" without knowing what "stream" meant ("Bhar diya
