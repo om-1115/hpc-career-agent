@@ -49,7 +49,8 @@ test('the store works the same on Redis: seed the demo school, read it back', as
   await seedDemo(store)
   assert.deepEqual((await store.profiles()).map((profile) => profile.code), ['S001', 'S002', 'S003', 'S004', 'S005', 'T001'])
   assert.equal((await store.resultHistory('S002')).length, 2)
-  assert.equal((await store.reflections('S002')).length, 2)
+  assert.equal((await store.reflections('S002')).length, 3)
+  assert.deepEqual(Object.keys(await store.surveyResponses('S002')), ['goal-academic'])
   assert.ok(values.has('hpc-career:data'))
 
   // A fresh store on the same database sees the same school.

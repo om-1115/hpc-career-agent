@@ -10,6 +10,8 @@
  *   DELETE /api/results/me     clear it to take the test again (students)
  *   GET    /api/passbook       the student's career passbook: tests, plans, reflections
  *   POST   /api/passbook/reflections  {text} → a reflection added to it
+ *   GET    /api/surveys/me     which surveys the student has finished, and when
+ *   POST   /api/surveys/:id    {answers, reflection} → saved; the reflection goes in the passbook
  *   GET    /api/class          every student and whether they finished (teachers)
  *   POST   /api/chat/session   a signed conversation handle
  *   POST   /api/chat           {handle, text} → the counsellor's reply as SSE
@@ -21,6 +23,7 @@
 import { randomUUID } from 'node:crypto'
 import express, { type NextFunction, type Request, type Response } from 'express'
 import { invalidAnswers, scoreTest } from '../shared/scoring.ts'
+import { invalidSurveyAnswers, surveyById } from '../shared/surveys.ts'
 import { DONE_SENTINEL, encodeEvent, SSE_HEADERS, type ChatEvent } from './lib/events.ts'
 import { issueSigned, readSigned } from './lib/handle.ts'
 import { offlineTurn } from './lib/offline.ts'
@@ -130,7 +133,7 @@ export function createApp({ dataFile, backend, sessionSecret }: AppConfig) {
     const entries = [
       ...tests.map((test) => ({ type: 'test' as const, at: test.completedAt, code: test.code, careerIds: test.matches.slice(0, 3).map((match) => match.id) })),
       ...plans.map((plan) => ({ type: 'plan' as const, at: plan.savedAt, summary: plan.summary, careerIds: plan.careerIds, nextSteps: plan.nextSteps })),
-      ...reflections.map((reflection) => ({ type: 'reflection' as const, at: reflection.createdAt, text: reflection.text })),
+      ...reflections.map((reflection) => ({ type: 'reflection' as const, at: reflection.createdAt, text: reflection.text, ...(reflection.source ? { source: reflection.source } : {}) })),
     ]
     // Newest first. Same-instant ties keep a fixed order: a reflection is
     // written about the plan or test it sits next to, so it goes on top.
@@ -144,6 +147,29 @@ export function createApp({ dataFile, backend, sessionSecret }: AppConfig) {
     if (!text || text.length > 500) return res.status(400).json({ error: 'text must be 1–500 characters' })
     const reflection = await store.addReflection((req as Authed).profile.code, text)
     res.json({ entry: { type: 'reflection', at: reflection.createdAt, text: reflection.text } })
+  })
+
+  app.get('/api/surveys/me', requireRole('student'), async (req, res) => {
+    const responses = await store.surveyResponses((req as Authed).profile.code)
+    res.json({ surveys: Object.fromEntries(Object.entries(responses).map(([id, response]) => [id, { completedAt: response.completedAt }])) })
+  })
+
+  // A finished survey. The reflection is the student's own (written for them
+  // from their answers, then edited by them), so it is saved as they send it.
+  app.post('/api/surveys/:id', requireRole('student'), async (req, res) => {
+    const survey = surveyById(String(req.params.id))
+    if (!survey) return res.status(404).json({ error: 'no_such_survey' })
+    const { answers, reflection } = (req.body ?? {}) as { answers?: unknown; reflection?: unknown }
+    const problem = invalidSurveyAnswers(survey, answers)
+    if (problem) return res.status(400).json({ error: 'invalid_answers', detail: problem })
+    const text = typeof reflection === 'string' ? reflection.trim() : ''
+    if (text.length > 500) return res.status(400).json({ error: 'reflection must be up to 500 characters' })
+
+    const code = (req as Authed).profile.code
+    const completedAt = new Date().toISOString()
+    await store.saveSurvey(code, survey.id, { answers: answers as Record<string, unknown>, completedAt })
+    const saved = text ? await store.addReflection(code, text, completedAt, survey.title) : null
+    res.json({ completedAt, entry: saved && { type: 'reflection', at: saved.createdAt, text: saved.text, source: saved.source } })
   })
 
   app.get('/api/class', requireRole('teacher'), async (_req, res) => {

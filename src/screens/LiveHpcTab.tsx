@@ -62,12 +62,15 @@ export function LiveHpcTab({ session, onOpenCareer }: { session: Session; onOpen
             {reflections.map((reflection) => (
               <li key={reflection.at} className="hpc-record__source hpc-record__source--text">
                 <span className="hpc-record__source-title">{reflection.text}</span>
-                <span className="hpc-record__source-meta">{date(reflection.at)}</span>
+                <span className="hpc-record__source-meta">
+                  {reflection.source ? `${reflection.source} survey · ` : ''}
+                  {date(reflection.at)}
+                </span>
               </li>
             ))}
           </ul>
         ) : (
-          <p className="hpc-record__panel-text">No reflections yet this term. One short note about what you learnt is enough.</p>
+          <p className="hpc-record__panel-text">No reflections yet this term. Each survey on your Home screen ends with one, or write a short note in your passbook.</p>
         )}
         <button type="button" className="hpc-record__primary" onClick={onOpenCareer}>
           Write a reflection in your passbook

@@ -9,6 +9,7 @@
 
 import { ALL_ITEMS, type Answers, type RiasecType } from '../../shared/test.ts'
 import { scoreTest } from '../../shared/scoring.ts'
+import { surveyById } from '../../shared/surveys.ts'
 import type { Store } from './store.ts'
 
 export const DEMO_TEACHER_PASSWORD = 'teacher-demo'
@@ -62,6 +63,11 @@ export async function seedDemo(store: Store): Promise<string[]> {
     nextSteps: ['Talk to an electrician about their work', 'Ask my teacher about PCM', 'Visit the polytechnic open day'],
     savedAt: daysAgo(7),
   })
+
+  // And this term's academic goal, set through the Goal Setting survey.
+  const goalAnswers = { subject: 'maths', now: 'bit-hard', goal: 'Score 75% in the mid-term Maths exam', how: ['daily', 'papers', 'ask'], when: 'midterm', confidence: 4 }
+  await store.saveSurvey('S002', 'goal-academic', { answers: goalAnswers, completedAt: daysAgo(5) })
+  await store.addReflection('S002', surveyById('goal-academic')!.reflect(goalAnswers), daysAgo(5), 'Goal Setting — Academic')
 
   return students.map((student) => student.code)
 }

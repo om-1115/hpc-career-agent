@@ -8,6 +8,7 @@ import TeacherHome from './screens/TeacherHome'
 import TestScreen from './screens/TestScreen'
 import ReportScreen from './screens/ReportScreen'
 import CareersScreen from './screens/CareersScreen'
+import SurveyScreen from './screens/SurveyScreen'
 
 export default function App() {
   const { session } = useAuth()
@@ -20,6 +21,7 @@ export default function App() {
       <Route path="/student/test" element={<RequireRole role="student"><TestScreen /></RequireRole>} />
       <Route path="/student/report" element={<RequireRole role="student"><ReportScreen /></RequireRole>} />
       <Route path="/student/careers" element={<RequireRole role="student"><CareersScreen /></RequireRole>} />
+      <Route path="/student/survey/:id" element={<RequireRole role="student"><SurveyScreen /></RequireRole>} />
       <Route path="/teacher" element={<RequireRole role="teacher"><TeacherHome /></RequireRole>} />
       <Route path="*" element={<Navigate to={home} replace />} />
     </Routes>

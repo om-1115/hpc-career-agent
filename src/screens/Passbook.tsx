@@ -90,7 +90,7 @@ export function Passbook({ session }: { session: Session }) {
               </span>
               <div className="passbook__body">
                 <p className="passbook__meta">
-                  {date(entry.at)} · {entry.type === 'test' ? 'Career test' : entry.type === 'plan' ? 'Plan saved' : 'Reflection'}
+                  {date(entry.at)} · {entry.type === 'test' ? 'Career test' : entry.type === 'plan' ? 'Plan saved' : entry.source ? `Reflection · ${entry.source} survey` : 'Reflection'}
                 </p>
                 {entry.type === 'test' && (
                   <>

@@ -28,8 +28,11 @@ export type AlertReason = 'distress' | 'safety' | 'other'
 /** A wellbeing flag the counsellor raised; open until a teacher resolves it. */
 export type Alert = { id: string; studentCode: string; reason: AlertReason; note: string; createdAt: string; resolvedAt?: string }
 
-/** A student's own note in their career passbook. */
-export type Reflection = { text: string; createdAt: string }
+/** A student's own note in their career passbook; `source` names the survey it came from, if any. */
+export type Reflection = { text: string; createdAt: string; source?: string }
+
+/** One finished survey: the answers as given, and when. */
+export type SurveyResponse = { answers: Record<string, unknown>; completedAt: string }
 
 export type Data = {
   accounts: StoredAccount[]
@@ -41,6 +44,8 @@ export type Data = {
   plans?: Record<string, Plan>
   planHistory?: Record<string, Plan[]>
   reflections?: Record<string, Reflection[]>
+  /** Each student's latest response to each survey, by survey id. */
+  surveys?: Record<string, Record<string, SurveyResponse>>
   alerts?: Alert[]
 }
 
@@ -204,9 +209,9 @@ export class Store {
     return (await this.read()).reflections?.[normaliseCode(studentCode)] ?? []
   }
 
-  addReflection(studentCode: string, text: string, createdAt = new Date().toISOString()): Promise<Reflection> {
+  addReflection(studentCode: string, text: string, createdAt = new Date().toISOString(), source?: string): Promise<Reflection> {
     const code = normaliseCode(studentCode)
-    const reflection = { text, createdAt }
+    const reflection: Reflection = source ? { text, createdAt, source } : { text, createdAt }
     return this.update((data) => {
       data.reflections = { ...data.reflections, [code]: [...(data.reflections?.[code] ?? []), reflection] }
       return reflection
@@ -222,7 +227,20 @@ export class Store {
       delete data.plans?.[code]
       delete data.planHistory?.[code]
       delete data.reflections?.[code]
+      delete data.surveys?.[code]
       data.alerts = (data.alerts ?? []).filter((alert) => alert.studentCode !== code)
+    })
+  }
+
+  async surveyResponses(studentCode: string): Promise<Record<string, SurveyResponse>> {
+    return (await this.read()).surveys?.[normaliseCode(studentCode)] ?? {}
+  }
+
+  /** Save a survey response, replacing an earlier one to the same survey. */
+  saveSurvey(studentCode: string, surveyId: string, response: SurveyResponse): Promise<void> {
+    const code = normaliseCode(studentCode)
+    return this.update((data) => {
+      data.surveys = { ...data.surveys, [code]: { ...data.surveys?.[code], [surveyId]: response } }
     })
   }
 

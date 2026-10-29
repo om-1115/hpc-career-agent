@@ -74,7 +74,10 @@ is obvious, and that programmes clash with exam months. **[O]**
 
 | Finding | In HPC Career |
 | --- | --- |
-| Students don't know what "stream" means (1) | The report explains every result in plain words and gives each career's route from Class 10, stream by stream. The test asks about everyday activities, not careers or streams. |
+| Students don't know what "stream" means (1) | The report explains every result in plain words and gives each career's route from Class 10, stream by stream. The test asks about everyday activities, not careers or streams. The Looking Forward survey explains "stream" inside the question, with what each one leads to. |
+| Students guess at questions they don't understand (1) | Every survey question has an "I don't understand this question" button. It is saved as an answer, so a teacher can see which questions confuse students, and it is left out of the student's reflection. |
+| One format fails about half the room (4) | The surveys mix options, a five-face scale and the student's own words. |
+| No signal that writing was read (4) | Each survey ends by writing the student's answers back to them as a first-person reflection, which they edit and keep in their passbook and Live HPC. |
 | Destination known, route unknown (2) | 36 careers, each with its route from Class 10 in India; a counsellor agent that answers only from those routes and says when to check the official website. |
 | Login fails on day one; no phones at school (3) | Built for shared classroom phones: profiles open with one tap, sessions live in the tab only, and an unfinished test survives a reload. |
 | Tools nobody is told about go unused (5) | Career guidance sits on the student's home screen ("Find careers that fit you") with the time it takes up front; the report is written for the student and their family. A proper in-app orientation is still to build (below). |
@@ -82,8 +85,9 @@ is obvious, and that programmes clash with exam months. **[O]**
 
 ## What it tells us to build next
 
-- **An "in my own words" answer and a "none of these fit me" option** on every
-  question (finding 4). Today the test is options only.
+- **An "in my own words" answer and an "I don't understand this question"
+  option on the career test** (findings 1 and 4). The surveys have both now;
+  the 56-question test is still options only.
 - **Hindi**, starting with the test and the report (findings 1 and 4).
 - **Exam pathways for Grade 12**: exam name, eligibility, dates and what to
   study for the destinations students named (finding 2).

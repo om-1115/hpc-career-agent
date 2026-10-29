@@ -28,6 +28,7 @@ quiet spell can take a few seconds).
   <img src="docs/screens/11-explore-careers.png" width="200" alt="Explore careers, sorted by best fit, each with the route from Class 10">
   <img src="docs/screens/14-teacher-class.png" width="200" alt="The teacher's class view: who has finished and each student's interest code">
   <img src="docs/screens/17-live-hpc.png" width="200" alt="Live HPC: the student's progress card for the term, parts A to F">
+  <img src="docs/screens/20-survey-reflection.png" width="200" alt="The end of the Looking Forward survey: a reflection written from the student's answers, ready to edit and save">
 </p>
 
 ## Why
@@ -93,6 +94,13 @@ the JSON file in `.data/`.
    Summary), with each competency's level and how it has grown term by term.
    About me and What I said come from their own test and reflections; projects
    and competencies are sample content until a school records them.
+8. **Takes the term's surveys** — Skills, Looking Forward, and Goal Setting
+   (academic and non-academic), from the Home screen. Each mixes options with
+   the student's own words, explains words like "stream" inside the question,
+   and has an "I don't understand this question" button instead of a forced
+   guess. At the end the app writes their answers back as a first-person
+   reflection; they edit it and save it to their passbook, where it also shows
+   in Live HPC under "What I said".
 
 A **teacher** sees who in the class has finished, each student's interest code,
 and where the class's interests lie.

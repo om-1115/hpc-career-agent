@@ -136,6 +136,37 @@ test('the passbook keeps every test, plan and reflection, newest first, for that
   assert.ok(entries[1].at >= entries[2].at)
 })
 
+test('a survey: refused until complete, then saved, its reflection in the passbook with where it came from', async (t) => {
+  const { server, call, token } = await start()
+  t.after(() => server.close())
+  const student = await token('student', 'S001', 'student-pass')
+  const teacher = await token('teacher', 'T001', 'teacher-pass')
+
+  assert.deepEqual(await (await call('/surveys/me', { token: student })).json(), { surveys: {} })
+  assert.equal((await call('/surveys/me', { token: teacher })).status, 403)
+  assert.equal((await call('/surveys/cooking', { method: 'POST', token: student, body: '{}' })).status, 404)
+
+  const answers = { area: 'sport', goal: 'Run 2 km without stopping', often: 'few', support: 'alone', excited: 5 }
+  const { area: _area, ...incomplete } = answers
+  assert.equal((await call('/surveys/goal-non-academic', { method: 'POST', token: student, body: JSON.stringify({ answers: incomplete }) })).status, 400)
+
+  const saved = await call('/surveys/goal-non-academic', {
+    method: 'POST',
+    token: student,
+    body: JSON.stringify({ answers, reflection: '  My goal: run 2 km without stopping.  ' }),
+  })
+  assert.equal(saved.status, 200)
+  const { surveys } = (await (await call('/surveys/me', { token: student })).json()) as { surveys: Record<string, { completedAt: string }> }
+  assert.deepEqual(Object.keys(surveys), ['goal-non-academic'])
+
+  const { entries } = (await (await call('/passbook', { token: student })).json()) as { entries: { type: string; text?: string; source?: string }[] }
+  assert.deepEqual(entries[0], { ...entries[0], type: 'reflection', text: 'My goal: run 2 km without stopping.', source: 'Goal Setting — Non-academic' })
+
+  // Without a reflection, the answers are saved and the passbook is left alone.
+  await call('/surveys/goal-non-academic', { method: 'POST', token: student, body: JSON.stringify({ answers, reflection: '' }) })
+  assert.equal(((await (await call('/passbook', { token: student })).json()) as { entries: unknown[] }).entries.length, 1)
+})
+
 test('incomplete answers are refused', async (t) => {
   const { server, call, token } = await start()
   t.after(() => server.close())

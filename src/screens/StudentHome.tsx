@@ -1,9 +1,12 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { Screen } from '../components/Screen'
 import { SectionHeader } from '../components/SectionHeader'
 import { SurveyRow } from '../components/SurveyRow'
 import { greeting, useAuth } from '../auth/AuthProvider'
 import { studentSurveys } from '../data/content'
+import { surveyStatus } from '../auth/api'
+import { surveyById } from '../../shared/surveys'
 import { CareerTab } from './CareerTab'
 import { LiveHpcTab } from './LiveHpcTab'
 import './CareerTab.css'
@@ -19,7 +22,24 @@ export default function StudentHome() {
   const { session } = useAuth()
   // The tab survives a trip to the test or report and back.
   const [activeNavId, setActiveNavId] = useState(() => sessionStorage.getItem('hpc_student_tab') ?? 'home')
+  const [done, setDone] = useState<Record<string, { completedAt: string }>>({})
+  const navigate = useNavigate()
+
+  useEffect(() => {
+    if (session?.role !== 'student') return
+    surveyStatus(session.token)
+      .then(({ surveys }) => setDone(surveys))
+      .catch(() => undefined)
+  }, [session])
+
   if (session?.role !== 'student') return null
+
+  // Surveys the app runs show their real status and open; the rest stay as designed.
+  const surveys = studentSurveys.map((survey) =>
+    surveyById(survey.id)
+      ? { ...survey, badge: done[survey.id] ? { label: 'Completed', tone: 'green' as const } : { label: 'Pending', tone: 'orange' as const } }
+      : survey,
+  )
 
   const select = (id: string) => {
     setActiveNavId(id)
@@ -39,8 +59,12 @@ export default function StudentHome() {
           <section className="screen__section">
             <SectionHeader title="Surveys for You" action={{ label: 'See All', onClick: () => {} }} />
             <div className="screen__list">
-              {studentSurveys.map((survey) => (
-                <SurveyRow key={survey.id} survey={survey} onClick={() => {}} />
+              {surveys.map((survey) => (
+                <SurveyRow
+                  key={survey.id}
+                  survey={survey}
+                  onClick={() => (surveyById(survey.id) ? navigate(`/student/survey/${survey.id}`) : undefined)}
+                />
               ))}
             </div>
           </section>

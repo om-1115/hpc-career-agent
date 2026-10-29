@@ -2,6 +2,7 @@
 
 import type { TestResult } from '../../shared/scoring'
 import type { Answers, RiasecType } from '../../shared/test'
+import type { SurveyAnswers } from '../../shared/surveys'
 
 export type Role = 'student' | 'teacher'
 export type Profile = { role: Role; code: string; name: string; classLine?: string }
@@ -59,12 +60,17 @@ export const classResults = (token: string) => call<{ students: ClassStudent[] }
 export type PassbookEntry =
   | { type: 'test'; at: string; code: RiasecType[]; careerIds: string[] }
   | { type: 'plan'; at: string; summary: string; careerIds: string[]; nextSteps: string[] }
-  | { type: 'reflection'; at: string; text: string }
+  | { type: 'reflection'; at: string; text: string; source?: string }
 
 export const passbook = (token: string) => call<{ entries: PassbookEntry[] }>('/passbook', {}, token)
 
 export const addReflection = (token: string, text: string) =>
   call<{ entry: PassbookEntry }>('/passbook/reflections', { method: 'POST', body: JSON.stringify({ text }) }, token)
+
+export const surveyStatus = (token: string) => call<{ surveys: Record<string, { completedAt: string }> }>('/surveys/me', {}, token)
+
+export const submitSurvey = (token: string, id: string, answers: SurveyAnswers, reflection: string) =>
+  call<{ completedAt: string; entry: PassbookEntry | null }>(`/surveys/${id}`, { method: 'POST', body: JSON.stringify({ answers, reflection }) }, token)
 
 export function describeError(error: unknown): string {
   switch (error instanceof ApiError ? error.code : '') {

@@ -48,6 +48,11 @@ passbook, open source under MIT:
   from Class 10, save a plan only after the student agrees, and alert the
   teacher if a student is in distress. (The chat screen in the app is still
   scripted; plugging the agent in needs a model key.)
+- **Surveys that reflect back:** Skills, Looking Forward and Goal Setting
+  (academic and non-academic). Each mixes options with the student's own
+  words, explains "stream" inside the question, has an "I don't understand
+  this question" button, and ends by writing the answers back as a
+  first-person reflection the student edits and keeps in their passbook.
 - **Live HPC:** the student's progress card for the term so far — about me,
   their reflections, projects, and how each competency is growing term by term
   (projects and competencies are sample content until a school records them).
