@@ -96,11 +96,11 @@ export function Checklist({ title, owner, listId, items }: { title: string; owne
   )
 }
 
-/** The student's six interest scores from their career test (their own data). */
+/** The student's six interest scores from their psychometric test (their own data). */
 export function InterestBars({ result }: { result: TestResult }) {
   const top = new Set(result.code)
   return (
-    <ul className="hpc-interests" aria-label="Interest scores from your career test">
+    <ul className="hpc-interests" aria-label="Interest scores from your psychometric test">
       {[...RIASEC_ORDER]
         .sort((a, b) => result.interests[b] - result.interests[a])
         .map((type) => (

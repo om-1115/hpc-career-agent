@@ -96,13 +96,13 @@ export function LiveHpcTab({ session, onOpenCareer }: { session: Session; onOpen
         <Panel label="Interests">
           {interestCode ? (
             <p className="hpc-record__panel-text">
-              From your career test: <strong>{interestCode}</strong>.
+              From your psychometric test: <strong>{interestCode}</strong>.
             </p>
           ) : (
-            <p className="hpc-record__panel-text">Take the career test to add your interests here.</p>
+            <p className="hpc-record__panel-text">Take the psychometric test to add your interests here.</p>
           )}
           <button type="button" className="hpc-record__link" onClick={onOpenCareer}>
-            {interestCode ? 'See your career profile' : 'Take the career test'}
+            {interestCode ? 'See your career profile' : 'Take the psychometric test'}
           </button>
         </Panel>
         {result && <InterestBars result={result} />}
@@ -117,7 +117,7 @@ export function LiveHpcTab({ session, onOpenCareer }: { session: Session; onOpen
           owner={session.code}
           listId="about"
           items={[
-            ...(result ? [] : [{ id: 'test', text: 'Take the career test to add your interests' }]),
+            ...(result ? [] : [{ id: 'test', text: 'Take the psychometric test to add your interests' }]),
             { id: 'attendance', text: `Keep attendance above 90% in November` },
             { id: 'activity', text: 'Try one new club or activity this term' },
             { id: 'share', text: 'Show this page to someone at home' },

@@ -46,7 +46,7 @@ export function CareerTab({ session }: { session: Session }) {
   return (
     <>
       <section className="screen__section">
-        <SectionHeader title="Career test" />
+        <SectionHeader title="Psychometric test" />
         <button type="button" className="career-card career-card--test" onClick={() => navigate(test.to)}>
           <span className="career-card__emoji" aria-hidden="true">🧠</span>
           <span className="career-card__body">

@@ -1,5 +1,5 @@
 /**
- * The career test: what a student likes doing (interests, Holland's RIASEC
+ * The psychometric test: what a student likes doing (interests, Holland's RIASEC
  * model) and how they tend to be (personality, the Big Five).
  *
  * Interests — 36 items written for this project, six per RIASEC type, about

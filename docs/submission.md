@@ -35,7 +35,7 @@ passbook, open source under MIT:
   the old one), each plan and the student's own reflections — on one dated
   timeline, so they decide with evidence, not guesswork.
 
-- **Career test:** 56 questions in about 10 minutes, covering interests
+- **Psychometric test:** 56 questions in about 10 minutes, covering interests
   (Holland's RIASEC; 36 items written for Indian students) and personality (the
   public-domain Mini-IPIP). One question per screen, built for shared classroom
   phones, scored only on the server.

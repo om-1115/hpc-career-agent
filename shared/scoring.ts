@@ -1,5 +1,5 @@
 /**
- * Scoring for the career test. Pure functions, shared by the server (which is
+ * Scoring for the psychometric test. Pure functions, shared by the server (which is
  * the only place a result is computed and stored) and the tests.
  *
  * There are no population norms behind any of this. Interest scores are the

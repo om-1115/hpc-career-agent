@@ -168,7 +168,7 @@ export function ChatPanel({ covered = false }: ChatPanelProps) {
             <button type="button" className="chat-shortcut" onClick={() => go('/student/test')}>
               <span className="chat-shortcut__emoji" aria-hidden="true">🧠</span>
               <span className="chat-shortcut__text">
-                <span className="chat-shortcut__label">Career test</span>
+                <span className="chat-shortcut__label">Psychometric test</span>
                 <span className="chat-shortcut__hint">Interests + personality</span>
               </span>
             </button>

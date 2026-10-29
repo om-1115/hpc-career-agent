@@ -21,7 +21,7 @@ const navItems = [
   { id: 'group-project', label: 'Group Project', icon: '/assets/icon-file.svg' },
 ]
 
-/** v1's teacher home (Figma 1:1444), with the class's career test results added. */
+/** v1's teacher home (Figma 1:1444), with the class's psychometric test results added. */
 export default function TeacherHome() {
   const { session } = useAuth()
   const [activeNavId, setActiveNavId] = useState('home')
@@ -61,7 +61,7 @@ export default function TeacherHome() {
   )
 }
 
-/** Who has taken the career test, and where the class's interests lie. */
+/** Who has taken the psychometric test, and where the class's interests lie. */
 function ClassCareers({ session }: { session: Session }) {
   const { signOut } = useAuth()
   const [students, setStudents] = useState<ClassStudent[] | null>(null)
@@ -85,7 +85,7 @@ function ClassCareers({ session }: { session: Session }) {
   return (
     <>
       <section className="screen__section">
-        <SectionHeader title="Career test" />
+        <SectionHeader title="Psychometric test" />
         <div className="career-report">
           <div>
             <p className="career-report__label">Finished</p>

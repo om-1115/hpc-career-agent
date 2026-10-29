@@ -567,7 +567,7 @@
   flex-shrink: 0;
 }
 
-/* ---- shortcuts: the career test and careers ---- */
+/* ---- shortcuts: the psychometric test and careers ---- */
 .chat-shortcuts {
   display: grid;
   grid-template-columns: 1fr 1fr;

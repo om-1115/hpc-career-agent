@@ -23,7 +23,7 @@ quiet spell can take a few seconds).
 [all screenshots](docs/screens/)
 
 <p>
-  <img src="docs/screens/05-interest-question.png" width="200" alt="A career test question: how much would you like to repair a bicycle, a fan or a mixer?">
+  <img src="docs/screens/05-interest-question.png" width="200" alt="A psychometric test question: how much would you like to repair a bicycle, a fan or a mixer?">
   <img src="docs/screens/08-report-top.png" width="200" alt="A career report: You're a Doer and a Thinker, with interest bars">
   <img src="docs/screens/11-explore-careers.png" width="200" alt="Explore careers, sorted by best fit, each with the route from Class 10">
   <img src="docs/screens/14-teacher-class.png" width="200" alt="The teacher's class view: who has finished and each student's interest code">
@@ -80,7 +80,7 @@ the JSON file in `.data/`.
 ## What a student does
 
 1. **Picks their profile** (for now; a school would add their password).
-2. **Takes the career test** — 56 questions, about 10 minutes, one per screen.
+2. **Takes the psychometric test** — 56 questions, about 10 minutes, one per screen.
    Progress is kept on the device, so a reload or a phone call costs nothing.
 3. **Reads their report** — their interest code (e.g. *Creator · Helper ·
    Thinker*), how they usually are, the six careers that fit best with the route

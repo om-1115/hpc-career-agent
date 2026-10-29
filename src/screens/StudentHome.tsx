@@ -75,7 +75,7 @@ export default function StudentHome() {
               <span className="career-card__emoji" aria-hidden="true">🧭</span>
               <span className="career-card__body">
                 <span className="career-card__title">Find careers that fit you</span>
-                <span className="career-card__description">Career test, your profile and 36 careers to explore</span>
+                <span className="career-card__description">Psychometric test, your profile and 36 careers to explore</span>
               </span>
             </button>
           </section>

@@ -31,7 +31,7 @@ function loadDraft(): { answers: Answers; step: number } {
 }
 
 /**
- * The career test: an intro, the 36 interest items, an intro, the 20
+ * The psychometric test: an intro, the 36 interest items, an intro, the 20
  * personality items, then a review. One question per screen; choosing an
  * answer moves on. Nothing is scored here — the answers go to the server.
  */
@@ -79,7 +79,7 @@ export default function TestScreen() {
 
   return (
     <PageShell
-      title="Career test"
+      title="Psychometric test"
       backTo="/student"
       progress={answered / ALL_ITEMS.length}
       footer={

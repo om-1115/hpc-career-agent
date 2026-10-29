@@ -78,7 +78,7 @@ export function Passbook({ session }: { session: Session }) {
         <div className="career-empty">
           <span className="career-empty__emoji" aria-hidden="true">📒</span>
           <p className="career-empty__title">Your passbook starts here</p>
-          <p className="career-empty__body">Take the career test or write your first reflection to begin your journey.</p>
+          <p className="career-empty__body">Take the psychometric test or write your first reflection to begin your journey.</p>
         </div>
       )}
       {entries && entries.length > 0 && (
@@ -90,7 +90,7 @@ export function Passbook({ session }: { session: Session }) {
               </span>
               <div className="passbook__body">
                 <p className="passbook__meta">
-                  {date(entry.at)} · {entry.type === 'test' ? 'Career test' : entry.type === 'plan' ? 'Plan saved' : entry.source ? `Reflection · ${entry.source} survey` : 'Reflection'}
+                  {date(entry.at)} · {entry.type === 'test' ? 'Psychometric test' : entry.type === 'plan' ? 'Plan saved' : entry.source ? `Reflection · ${entry.source} survey` : 'Reflection'}
                 </p>
                 {entry.type === 'test' && (
                   <>

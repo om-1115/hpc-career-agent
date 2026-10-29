@@ -86,7 +86,7 @@ is obvious, and that programmes clash with exam months. **[O]**
 ## What it tells us to build next
 
 - **An "in my own words" answer and an "I don't understand this question"
-  option on the career test** (findings 1 and 4). The surveys have both now;
+  option on the psychometric test** (findings 1 and 4). The surveys have both now;
   the 56-question test is still options only.
 - **Hindi**, starting with the test and the report (findings 1 and 4).
 - **Exam pathways for Grade 12**: exam name, eligibility, dates and what to

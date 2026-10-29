@@ -10,7 +10,7 @@ const formatSize = (bytes?: number) =>
     : `${(bytes / 1024 / 1024).toFixed(1)} MB`
 
 const ACTION_LABELS: Record<string, string> = {
-  test: 'Take the career test',
+  test: 'Take the psychometric test',
   report: 'Open your report',
   careers: 'Explore careers',
 }

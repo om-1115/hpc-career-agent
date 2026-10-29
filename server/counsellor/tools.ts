@@ -37,7 +37,7 @@ export const TOOL_SPECS: ToolSpec[] = [
   {
     name: 'get_my_result',
     description:
-      'Get the signed-in student’s career test result: interest code, interest scores, personality levels and best-matching careers. Returns completed=false if they have not taken the test. Call this before suggesting careers.',
+      'Get the signed-in student’s psychometric test result: interest code, interest scores, personality levels and best-matching careers. Returns completed=false if they have not taken the test. Call this before suggesting careers.',
     params: {},
   },
   {

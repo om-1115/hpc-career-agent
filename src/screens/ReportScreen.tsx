@@ -53,7 +53,7 @@ export default function ReportScreen() {
         <section className="test-card test-card--center">
           <span className="test-card__emoji" aria-hidden="true">🔒</span>
           <h2 className="test-card__title">No report yet</h2>
-          <p className="test-card__body">Take the career test and your report will appear here.</p>
+          <p className="test-card__body">Take the psychometric test and your report will appear here.</p>
           <Link className="career-button" to="/student/test" style={{ display: 'grid', placeItems: 'center' }}>
             Take the test
           </Link>
