@@ -26,7 +26,7 @@ export const get_careerTool = tool(
   {
     id: z.string().describe("A career id from search_careers or get_my_result."),
   },
-  async (args) => ({ content: [{ type: "text", text: get_career(args) }] })
+  async (args) => ({ content: [{ type: "text", text: await get_career(args) }] })
 );
 
 // AgentFoundry's Tools panel lists a tool by its name and input_schema.

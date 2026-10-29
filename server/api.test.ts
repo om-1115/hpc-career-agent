@@ -16,8 +16,8 @@ import { ALL_ITEMS, INTEREST_ITEMS } from '../shared/test.ts'
 async function start() {
   const dataFile = join(mkdtempSync(join(tmpdir(), 'hpc-career-')), 'db.json')
   const { app, store } = createApp({ dataFile, sessionSecret: 'test-secret' })
-  store.upsert({ role: 'student', code: 's001', name: 'Asha Kumari', classLine: 'Class 10 · A' }, 'student-pass')
-  store.upsert({ role: 'teacher', code: 'T001', name: 'Meera Sharma' }, 'teacher-pass')
+  await store.upsert({ role: 'student', code: 's001', name: 'Asha Kumari', classLine: 'Class 10 · A' }, 'student-pass')
+  await store.upsert({ role: 'teacher', code: 'T001', name: 'Meera Sharma' }, 'teacher-pass')
 
   const server = app.listen(0)
   await new Promise((resolve) => server.once('listening', resolve))

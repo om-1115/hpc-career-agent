@@ -9,6 +9,7 @@
     "dev:server": "tsx watch server/index.ts",
     "dev:all": "npm run dev:server & npm run dev",
     "build": "tsc -b && vite build",
+    "build:vercel": "npm run build && node scripts/build-vercel.mjs",
     "server": "tsx server/index.ts",
     "start:demo": "npm run seed:demo && npm run server",
     "account:add": "tsx server/scripts/addAccount.ts",
@@ -30,6 +31,7 @@
     "@types/react": "^19.2.18",
     "@types/react-dom": "^19.2.5",
     "@vitejs/plugin-react": "^6.1.0",
+    "esbuild": "^0.28.2",
     "tsx": "^4.23.12",
     "typescript": "^7.0.2",
     "vite": "^8.2.2"

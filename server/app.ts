@@ -24,9 +24,10 @@ import { invalidAnswers, scoreTest } from '../shared/scoring.ts'
 import { DONE_SENTINEL, encodeEvent, SSE_HEADERS, type ChatEvent } from './lib/events.ts'
 import { issueSigned, readSigned } from './lib/handle.ts'
 import { offlineTurn } from './lib/offline.ts'
-import { normaliseCode, Store, type Profile, type Role } from './lib/store.ts'
+import { normaliseCode, Store, type Backend, type Profile, type Role } from './lib/store.ts'
 
-export type AppConfig = { dataFile: string; sessionSecret: string }
+/** Where data lives: a JSON file path, or any backend (Redis on Vercel). */
+export type AppConfig = { dataFile?: string; backend?: Backend; sessionSecret: string }
 
 const SESSION_TTL_MS = 10 * 60 * 60 * 1000
 const MAX_FAILURES = 5
@@ -34,8 +35,8 @@ const LOCK_MS = 15 * 60 * 1000
 
 type Authed = Request & { profile: Profile }
 
-export function createApp({ dataFile, sessionSecret }: AppConfig) {
-  const store = new Store(dataFile)
+export function createApp({ dataFile, backend, sessionSecret }: AppConfig) {
+  const store = new Store(backend ?? dataFile ?? '.data/db.json')
   const failures = new Map<string, { count: number; until: number }>()
   const app = express()
 
@@ -51,7 +52,7 @@ export function createApp({ dataFile, sessionSecret }: AppConfig) {
     next()
   }
 
-  app.post('/api/login', (req, res) => {
+  app.post('/api/login', async (req, res) => {
     const { role, code, password } = (req.body ?? {}) as Record<string, unknown>
     if ((role !== 'student' && role !== 'teacher') || typeof code !== 'string' || !code.trim() || typeof password !== 'string' || !password) {
       return res.status(400).json({ error: 'credentials_required' })
@@ -61,7 +62,7 @@ export function createApp({ dataFile, sessionSecret }: AppConfig) {
     const record = failures.get(key)
     if (record && record.until > Date.now()) return res.status(429).json({ error: 'too_many_attempts' })
 
-    const profile = store.verify(role, code, password)
+    const profile = await store.verify(role, code, password)
     if (!profile) {
       const count = (record && record.until === 0 ? record.count : 0) + 1
       failures.set(key, count >= MAX_FAILURES ? { count: 0, until: Date.now() + LOCK_MS } : { count, until: 0 })
@@ -75,16 +76,16 @@ export function createApp({ dataFile, sessionSecret }: AppConfig) {
   // Open profiles, for now: the app starts on a list of profiles and opens one
   // with a tap, no password. /api/login above keeps password sign-in for when
   // the app goes to a school.
-  app.get('/api/profiles', (_req, res) => {
-    res.json({ profiles: store.profiles() })
+  app.get('/api/profiles', async (_req, res) => {
+    res.json({ profiles: await store.profiles() })
   })
 
-  app.post('/api/profiles/open', (req, res) => {
+  app.post('/api/profiles/open', async (req, res) => {
     const { role, code } = (req.body ?? {}) as Record<string, unknown>
     if ((role !== 'student' && role !== 'teacher') || typeof code !== 'string' || !code.trim()) {
       return res.status(400).json({ error: 'profile_required' })
     }
-    const profile = store.profile(role, code)
+    const profile = await store.profile(role, code)
     if (!profile) return res.status(404).json({ error: 'no_such_profile' })
     res.json({ profile, token: issueSigned(profile, sessionSecret, SESSION_TTL_MS) })
   })
@@ -96,36 +97,40 @@ export function createApp({ dataFile, sessionSecret }: AppConfig) {
     res.json({ profile: { role, code, name, classLine } })
   })
 
-  app.get('/api/results/me', requireRole('student'), (req, res) => {
-    res.json({ result: store.result((req as Authed).profile.code) })
+  app.get('/api/results/me', requireRole('student'), async (req, res) => {
+    res.json({ result: await store.result((req as Authed).profile.code) })
   })
 
-  app.post('/api/results', requireRole('student'), (req, res) => {
+  app.post('/api/results', requireRole('student'), async (req, res) => {
     const answers = (req.body ?? {}).answers
     const problem = invalidAnswers(answers)
     if (problem) return res.status(400).json({ error: 'invalid_answers', detail: problem })
     const result = scoreTest(answers)
-    store.saveResult((req as Authed).profile.code, result)
+    await store.saveResult((req as Authed).profile.code, result)
     res.json({ result })
   })
 
-  app.delete('/api/results/me', requireRole('student'), (req, res) => {
-    store.clearResult((req as Authed).profile.code)
+  app.delete('/api/results/me', requireRole('student'), async (req, res) => {
+    await store.clearResult((req as Authed).profile.code)
     res.json({ result: null })
   })
 
   // The career passbook: everything the student has done on their journey,
   // newest first — each test, each plan, and their own reflections.
-  app.get('/api/passbook', requireRole('student'), (req, res) => {
+  app.get('/api/passbook', requireRole('student'), async (req, res) => {
     const code = (req as Authed).profile.code
-    const tests = store.resultHistory(code)
-    const current = store.result(code)
+    const [tests, current, plans, reflections] = await Promise.all([
+      store.resultHistory(code),
+      store.result(code),
+      store.planHistory(code),
+      store.reflections(code),
+    ])
     // Results saved before history was kept are still part of the journey.
     if (current && !tests.some((test) => test.completedAt === current.completedAt)) tests.push(current)
     const entries = [
       ...tests.map((test) => ({ type: 'test' as const, at: test.completedAt, code: test.code, careerIds: test.matches.slice(0, 3).map((match) => match.id) })),
-      ...store.planHistory(code).map((plan) => ({ type: 'plan' as const, at: plan.savedAt, summary: plan.summary, careerIds: plan.careerIds, nextSteps: plan.nextSteps })),
-      ...store.reflections(code).map((reflection) => ({ type: 'reflection' as const, at: reflection.createdAt, text: reflection.text })),
+      ...plans.map((plan) => ({ type: 'plan' as const, at: plan.savedAt, summary: plan.summary, careerIds: plan.careerIds, nextSteps: plan.nextSteps })),
+      ...reflections.map((reflection) => ({ type: 'reflection' as const, at: reflection.createdAt, text: reflection.text })),
     ]
     // Newest first. Same-instant ties keep a fixed order: a reflection is
     // written about the plan or test it sits next to, so it goes on top.
@@ -134,16 +139,18 @@ export function createApp({ dataFile, sessionSecret }: AppConfig) {
     res.json({ entries })
   })
 
-  app.post('/api/passbook/reflections', requireRole('student'), (req, res) => {
+  app.post('/api/passbook/reflections', requireRole('student'), async (req, res) => {
     const text = typeof req.body?.text === 'string' ? req.body.text.trim() : ''
     if (!text || text.length > 500) return res.status(400).json({ error: 'text must be 1–500 characters' })
-    const reflection = store.addReflection((req as Authed).profile.code, text)
+    const reflection = await store.addReflection((req as Authed).profile.code, text)
     res.json({ entry: { type: 'reflection', at: reflection.createdAt, text: reflection.text } })
   })
 
-  app.get('/api/class', requireRole('teacher'), (_req, res) => {
-    const students = store.students().map((student) => {
-      const result = store.result(student.code)
+  app.get('/api/class', requireRole('teacher'), async (_req, res) => {
+    const roster = await store.students()
+    const results = await Promise.all(roster.map((student) => store.result(student.code)))
+    const students = roster.map((student, index) => {
+      const result = results[index]
       return {
         code: student.code,
         name: student.name,

@@ -28,7 +28,7 @@ export const search_careersTool = tool(
     keyword: z.string().optional().describe("A word to look for in the title or summary. Optional."),
     limit: z.number().optional().describe("How many to return, 1–10. Default 5."),
   },
-  async (args) => ({ content: [{ type: "text", text: search_careers(args) }] })
+  async (args) => ({ content: [{ type: "text", text: await search_careers(args) }] })
 );
 
 // AgentFoundry's Tools panel lists a tool by its name and input_schema.

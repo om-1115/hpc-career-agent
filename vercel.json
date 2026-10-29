@@ -1,0 +1,5 @@
+{
+  "framework": null,
+  "installCommand": "npm ci --include=dev",
+  "buildCommand": "npm run build:vercel"
+}

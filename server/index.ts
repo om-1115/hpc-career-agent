@@ -9,6 +9,7 @@ import { existsSync } from 'node:fs'
 import { fileURLToPath } from 'node:url'
 import express from 'express'
 import { createApp } from './app.ts'
+import { backendFromEnv } from './lib/store.ts'
 
 if (existsSync('.env.local')) process.loadEnvFile('.env.local')
 
@@ -18,7 +19,7 @@ if (!process.env.SESSION_SECRET) {
   console.warn('[server] SESSION_SECRET is unset — using a random one, so a restart signs everyone out.')
 }
 
-const { app } = createApp({ dataFile: process.env.DATA_FILE || '.data/db.json', sessionSecret })
+const { app } = createApp({ backend: backendFromEnv(process.env.DATA_FILE || '.data/db.json'), sessionSecret })
 
 const dist = fileURLToPath(new URL('../dist', import.meta.url))
 if (existsSync(dist)) {

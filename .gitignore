@@ -6,3 +6,4 @@ dist
 
 # Accounts (password hashes) and test results — real people's data.
 .data/
+.vercel

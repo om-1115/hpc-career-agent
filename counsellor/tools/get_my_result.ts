@@ -24,7 +24,7 @@ export const get_my_resultTool = tool(
   "get_my_result",
   "Get the signed-in student's career test result: interest code, interest scores, personality levels and best-matching careers. Returns completed=false if they have not taken the test. Call this before suggesting careers.",
   {},
-  async (args) => ({ content: [{ type: "text", text: get_my_result(args) }] })
+  async (args) => ({ content: [{ type: "text", text: await get_my_result(args) }] })
 );
 
 // AgentFoundry's Tools panel lists a tool by its name and input_schema.

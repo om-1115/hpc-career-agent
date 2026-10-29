@@ -32,5 +32,5 @@ if (password.length < 8) {
 }
 
 const file = process.env.DATA_FILE || '.data/db.json'
-new Store(file).upsert({ role, code, name, ...(classLine ? { classLine } : {}) }, password)
+await new Store(file).upsert({ role, code, name, ...(classLine ? { classLine } : {}) }, password)
 console.log(`Saved ${role} ${code.trim().toUpperCase()} (${name.trim()}) to ${file}`)

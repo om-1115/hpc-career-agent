@@ -28,7 +28,7 @@ export const save_planTool = tool(
     career_ids: z.string().describe("Up to 3 career ids, comma-separated."),
     next_steps: z.string().describe("Up to 5 next steps, one per line."),
   },
-  async (args) => ({ content: [{ type: "text", text: save_plan(args) }] })
+  async (args) => ({ content: [{ type: "text", text: await save_plan(args) }] })
 );
 
 // AgentFoundry's Tools panel lists a tool by its name and input_schema.

@@ -28,4 +28,4 @@ function withTestArgs(args: unknown): unknown {
 }
 
 /** Runs a tool against the app and returns its answer as JSON text for the model. */
-export const callApp = (name: string, args: unknown) => JSON.stringify(runTool(ctx, name, withTestArgs(args)));
+export const callApp = async (name: string, args: unknown) => JSON.stringify(await runTool(ctx, name, withTestArgs(args)));

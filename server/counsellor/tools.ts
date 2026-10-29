@@ -82,8 +82,8 @@ const LEVEL = { low: 'lower', moderate: 'in the middle', high: 'higher' } as con
 const careerById = (id: string) => CAREERS.find((career) => career.id === id)
 const brief = (career: Career) => ({ id: career.id, title: career.title, code: career.code.join(''), summary: career.summary })
 
-export function getMyResult({ store, studentCode }: ToolContext): ToolOutput {
-  const result = store.result(studentCode)
+export async function getMyResult({ store, studentCode }: ToolContext): Promise<ToolOutput> {
+  const result = await store.result(studentCode)
   if (!result) return { completed: false }
   return {
     completed: true,
@@ -104,11 +104,11 @@ export function getMyResult({ store, studentCode }: ToolContext): ToolOutput {
   }
 }
 
-export function searchCareers({ store, studentCode }: ToolContext, args: { types?: string; keyword?: string; limit?: number }): ToolOutput {
+export async function searchCareers({ store, studentCode }: ToolContext, args: { types?: string; keyword?: string; limit?: number }): Promise<ToolOutput> {
   const types = (args.types ?? '').toUpperCase().replace(/[^RIASEC]/g, '').split('') as RiasecType[]
   const keyword = (args.keyword ?? '').trim().toLowerCase()
   const limit = Math.max(1, Math.min(10, Math.round(args.limit ?? 5)))
-  const result = store.result(studentCode)
+  const result = await store.result(studentCode)
 
   let careers = CAREERS.filter((career) => types.every((type) => career.code.includes(type)))
   if (keyword) careers = careers.filter((career) => `${career.title} ${career.summary}`.toLowerCase().includes(keyword))
@@ -131,7 +131,7 @@ export function getCareer(_ctx: ToolContext, args: { id: string }): ToolOutput {
   }
 }
 
-export function savePlan({ store, studentCode }: ToolContext, args: { summary: string; career_ids: string; next_steps: string }): ToolOutput {
+export async function savePlan({ store, studentCode }: ToolContext, args: { summary: string; career_ids: string; next_steps: string }): Promise<ToolOutput> {
   const summary = args.summary.trim()
   if (!summary || summary.length > 300) return { error: 'summary must be 1–300 characters.' }
   const careerIds = args.career_ids.split(',').map((id) => id.trim()).filter(Boolean)
@@ -142,18 +142,18 @@ export function savePlan({ store, studentCode }: ToolContext, args: { summary: s
   if (nextSteps.length < 1 || nextSteps.length > 5) return { error: 'next_steps needs 1–5 lines.' }
   if (nextSteps.some((step) => step.length > 160)) return { error: 'Each next step must be under 160 characters.' }
 
-  store.savePlan(studentCode, { summary, careerIds, nextSteps, savedAt: new Date().toISOString() })
+  await store.savePlan(studentCode, { summary, careerIds, nextSteps, savedAt: new Date().toISOString() })
   return { saved: true, visible_to: 'the student’s teacher', careers: careerIds.map((id) => careerById(id)!.title) }
 }
 
 const REASONS: AlertReason[] = ['distress', 'safety', 'other']
 
-export function alertTeacher({ store, studentCode }: ToolContext, args: { reason: string; note: string }): ToolOutput {
+export async function alertTeacher({ store, studentCode }: ToolContext, args: { reason: string; note: string }): Promise<ToolOutput> {
   const reason = args.reason.trim().toLowerCase() as AlertReason
   if (!REASONS.includes(reason)) return { error: 'reason must be distress, safety or other.' }
   const note = args.note.trim()
   if (!note || note.length > 200) return { error: 'note must be 1–200 characters.' }
-  store.addAlert({ studentCode, reason, note })
+  await store.addAlert({ studentCode, reason, note })
   return {
     sent: true,
     tell_the_student: 'Their teacher has been told and will check in. If they are in danger now, they should tell a trusted adult or call Tele-MANAS on 14416 (free, 24×7).',
@@ -165,7 +165,7 @@ export function alertTeacher({ store, studentCode }: ToolContext, args: { reason
  * missing or mistyped parameters come back as `{ error }` for the model to
  * read, never as an exception.
  */
-export function runTool(ctx: ToolContext, name: string, rawArgs: unknown): ToolOutput {
+export async function runTool(ctx: ToolContext, name: string, rawArgs: unknown): Promise<ToolOutput> {
   const spec = TOOL_SPECS.find((candidate) => candidate.name === name)
   if (!spec) return { error: `Unknown tool "${name}".` }
   const args = (rawArgs && typeof rawArgs === 'object' ? rawArgs : {}) as Record<string, unknown>

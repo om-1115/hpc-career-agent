@@ -27,7 +27,7 @@ export const alert_teacherTool = tool(
     reason: z.string().describe("One of: distress, safety, other."),
     note: z.string().describe("What the teacher should know, max 200 characters. No quotes of sensitive detail."),
   },
-  async (args) => ({ content: [{ type: "text", text: alert_teacher(args) }] })
+  async (args) => ({ content: [{ type: "text", text: await alert_teacher(args) }] })
 );
 
 // AgentFoundry's Tools panel lists a tool by its name and input_schema.

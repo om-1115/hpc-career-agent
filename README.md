@@ -60,15 +60,16 @@ real student data. Password sign-in is still built into the API
 (`/api/login`: hashed passwords and a 5-try lock) for when the app goes to a
 school.
 
-### Run it on Render
+### Run it on Vercel
 
-[![Deploy to Render](https://render.com/images/deploy-to-render-button.svg)](https://render.com/deploy?repo=https://github.com/om-1115/hpc-career-agent)
-
-[`render.yaml`](render.yaml) sets up one free Node web service that builds the
-app and serves it with its API. Every start re-seeds the demo school
-(`npm run start:demo`), so visitors always find it clean, and anything they do
-is wiped on the next restart. No API key is needed. Free services sleep when
-idle, so the first visit can take about 30 seconds.
+The public demo runs on Vercel: [`vercel.json`](vercel.json) builds the app and
+bundles the API into one Node function
+([`scripts/build-vercel.mjs`](scripts/build-vercel.mjs)), and the data lives in
+Upstash Redis, connected through Vercel's Storage tab (it sets
+`KV_REST_API_URL` and `KV_REST_API_TOKEN`). The first request on an empty
+database seeds the demo school. Set `SESSION_SECRET` in the project's
+environment variables. Locally, with no Redis variables, the app keeps using
+the JSON file in `.data/`.
 
 ## What a student does
 
@@ -166,7 +167,8 @@ counsellor/   the counsellor agent, built in AgentFoundry (Claude Agent SDK, fiv
 src/          React 19 + Vite app: v1 Holistic Progress Card screens + the career journey
 ```
 
-- **Profiles** are in one JSON file under `.data/` (git-ignored). The app
+- **Profiles and results** are one JSON document: a file under `.data/`
+  (git-ignored) locally, or Upstash Redis on Vercel (`server/lib/store.ts`). The app
   opens them from a list for now (`/api/profiles`); password sign-in
   (`/api/login`) keeps scrypt hashes and locks an account for 15 minutes
   after five wrong passwords. Add accounts with
