@@ -15,7 +15,7 @@ Built for **Code for a Billion — Bharat Agentic-AI Hackathon 2026**
 
 **Pitch deck and demo video:** [slides (.pptx)](docs/HPC-Career-Explainer.pptx) ·
 [slides (PDF)](docs/HPC-Career-Explainer.pdf) ·
-[3-minute explainer with a live demo (MP4)](docs/HPC-Career-Demo.mp4) ·
+[watch the 3-minute explainer with a live demo](https://drive.google.com/file/d/1j4Z9LbF3U3TctUBFZJVDrT7gIAyu70To/view?usp=sharing) ([MP4 in the repo](docs/HPC-Career-Demo.mp4)) ·
 [all screenshots](docs/screens/)
 
 <p>

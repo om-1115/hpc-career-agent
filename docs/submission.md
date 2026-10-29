@@ -80,10 +80,10 @@ https://github.com/om-1115/hpc-career-agent
 
 **Demo URL (live app or video)**
 
-*[The video is `docs/HPC-Career-Demo.mp4` (2:43, captioned). For judges, upload
-it to YouTube (unlisted) or Google Drive and paste that link. The direct GitHub
-link also works but downloads rather than plays in some browsers:
-https://github.com/om-1115/hpc-career-agent/raw/main/docs/HPC-Career-Demo.mp4]*
+https://drive.google.com/file/d/1j4Z9LbF3U3TctUBFZJVDrT7gIAyu70To/view?usp=sharing
+
+(The 2:43 captioned explainer with a live demo; also in the repo as
+`docs/HPC-Career-Demo.mp4`.)
 
 Slides: https://github.com/om-1115/hpc-career-agent/blob/main/docs/HPC-Career-Explainer.pdf
 
@@ -122,5 +122,4 @@ Education
 
 - [x] Built using AgentFoundry (AF), the official IDE
 - [x] Our repository is public and includes a README with setup steps
-- [x] The demo link works and is accessible to judges — *after uploading the
-  video*
+- [x] The demo link works and is accessible to judges
