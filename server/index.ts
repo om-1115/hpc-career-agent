@@ -19,7 +19,8 @@ if (!process.env.SESSION_SECRET) {
   console.warn('[server] SESSION_SECRET is unset — using a random one, so a restart signs everyone out.')
 }
 
-const { app } = createApp({ backend: backendFromEnv(process.env.DATA_FILE || '.data/db.json'), sessionSecret })
+const pilot = process.env.PILOT_MODE === '1'
+const { app } = createApp({ backend: backendFromEnv(process.env.DATA_FILE || '.data/db.json'), sessionSecret, pilot })
 
 const dist = fileURLToPath(new URL('../dist', import.meta.url))
 if (existsSync(dist)) {
@@ -32,5 +33,5 @@ if (existsSync(dist)) {
 }
 
 app.listen(port, () => {
-  console.log(`[server] listening on :${port}${existsSync(dist) ? ' — serving dist/' : ''}`)
+  console.log(`[server] listening on :${port}${pilot ? ' — pilot mode' : ''}${existsSync(dist) ? ' — serving dist/' : ''}`)
 })

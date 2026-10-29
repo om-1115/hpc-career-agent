@@ -14,6 +14,10 @@ import { seedDemo } from '../lib/demo.ts'
 import { backendFromEnv, Store } from '../lib/store.ts'
 
 if (existsSync('.env.local')) process.loadEnvFile('.env.local')
+if (process.env.PILOT_MODE === '1') {
+  console.error('PILOT_MODE=1: this is a pilot database, and the demo school never goes into real students’ data.')
+  process.exit(1)
+}
 
 const codes = await seedDemo(new Store(backendFromEnv(process.env.DATA_FILE || '.data/db.json')))
 

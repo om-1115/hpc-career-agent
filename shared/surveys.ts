@@ -29,9 +29,11 @@ export type SurveyDefinition = {
   questions: SurveyQuestion[]
   /** The student's answers, said back to them in their own voice. */
   reflect: (answers: SurveyAnswers) => string
+  /** A pilot study's questions: answered once, no reflection (see PILOT_SURVEYS). */
+  pilot?: true
 }
 
-export type SurveyId = 'skills' | 'looking-forward' | 'goal-academic' | 'goal-non-academic'
+export type SurveyId = 'skills' | 'looking-forward' | 'goal-academic' | 'goal-non-academic' | 'pilot-before' | 'pilot-after'
 
 /** Choice: an option value; multi: option values; scale: 1–5; text: the student's words. */
 export type SurveyAnswer = string | string[] | number
@@ -462,7 +464,128 @@ const GOAL_NON_ACADEMIC: SurveyDefinition = {
 
 export const SURVEYS: SurveyDefinition[] = [GOAL_ACADEMIC, GOAL_NON_ACADEMIC, LOOKING_FORWARD, SKILLS]
 
-export const surveyById = (id: string) => SURVEYS.find((survey) => survey.id === id)
+/*
+ * The pilot's before and after questions (docs/pilot/). The same three
+ * questions are asked before the psychometric test and after the report, so
+ * each student is compared with themselves: how many careers they can name,
+ * whether they know the route to the work they want, and how sure they are
+ * about a stream. The after questions add how well the report fits them.
+ */
+
+const PILOT_PRIVACY =
+  'Your teacher and the pilot team see your answers. Anything shared outside your school is a total for the whole group — never your name.'
+
+const careersQuestion = (prompt: string, help: string): SurveyQuestion => ({
+  id: 'careers',
+  kind: 'text',
+  prompt,
+  help,
+  placeholder: 'e.g. teacher, nurse, electrician',
+  maxLength: 600,
+  optional: true,
+})
+
+const ROUTE: SurveyQuestion = {
+  id: 'route',
+  kind: 'choice',
+  prompt: 'Think of the work you would most like to do. Do you know what to study after Class 10 to get there?',
+  options: [
+    { value: 'yes', label: 'Yes, I know the steps' },
+    { value: 'some', label: 'I know some of the steps' },
+    { value: 'no', label: 'No, I don’t know the steps' },
+    { value: 'undecided', label: 'I haven’t picked any work yet' },
+  ],
+}
+
+const STREAM_SURE: SurveyQuestion = {
+  id: 'stream',
+  kind: 'scale',
+  prompt: 'How sure are you about which stream to take in Class 11?',
+  help: 'A stream is the group of subjects you study in Class 11 and 12, like Science, Commerce or Arts (Humanities).',
+  low: 'Not sure',
+  high: 'Very sure',
+  words: ['not sure at all', 'a little sure', 'somewhat sure', 'quite sure', 'very sure'],
+}
+
+const PILOT_BEFORE: SurveyDefinition = {
+  id: 'pilot-before',
+  title: 'Before you start',
+  emoji: '🧭',
+  intro: 'Four quick questions about what you know today, before the psychometric test. They help us find out whether HPC Career helps students like you.',
+  minutes: 3,
+  topics: ['Careers you know', 'The route to your work', 'Choosing a stream'],
+  privacy: PILOT_PRIVACY,
+  pilot: true,
+  questions: [
+    careersQuestion(
+      'Write down every job or career you can think of that someone could do after school.',
+      'As many as you can, with a comma between them. If none come to mind, leave it empty and tap Next.',
+    ),
+    ROUTE,
+    STREAM_SURE,
+    {
+      id: 'guided',
+      kind: 'choice',
+      prompt: 'This school year, has anyone at school talked with you about careers?',
+      options: [
+        { value: 'yes', label: 'Yes' },
+        { value: 'no', label: 'No' },
+      ],
+    },
+  ],
+  reflect: () => '',
+}
+
+const PILOT_AFTER: SurveyDefinition = {
+  id: 'pilot-after',
+  title: 'After your report',
+  emoji: '🏁',
+  intro: 'Three of the questions from before, and three about your report. Answer for how you feel now.',
+  minutes: 4,
+  topics: ['Careers you know', 'The route to your work', 'Choosing a stream', 'Your report'],
+  privacy: PILOT_PRIVACY,
+  pilot: true,
+  questions: [
+    careersQuestion(
+      'Now write down every job or career you can think of that someone could do after school.',
+      'As many as you can, with a comma between them — the ones you knew before count too.',
+    ),
+    ROUTE,
+    STREAM_SURE,
+    {
+      id: 'fit',
+      kind: 'scale',
+      prompt: 'How well does your report describe you?',
+      low: 'Not at all',
+      high: 'Very well',
+      words: ['not at all', 'a little', 'partly', 'mostly', 'very well'],
+    },
+    {
+      id: 'home',
+      kind: 'choice',
+      prompt: 'Will you show your report to someone at home, or talk about it with them?',
+      options: [
+        { value: 'yes', label: 'Yes' },
+        { value: 'maybe', label: 'Maybe' },
+        { value: 'no', label: 'No' },
+      ],
+    },
+    {
+      id: 'confusing',
+      kind: 'text',
+      prompt: 'Were any words or parts of the app confusing? Write them here.',
+      help: 'This helps us fix them. Leave it empty if nothing was.',
+      placeholder: 'e.g. “Investigative”',
+      maxLength: 300,
+      optional: true,
+    },
+  ],
+  reflect: () => '',
+}
+
+export const PILOT_SURVEYS: SurveyDefinition[] = [PILOT_BEFORE, PILOT_AFTER]
+
+export const surveyById = (id: string) => [...SURVEYS, ...PILOT_SURVEYS].find((survey) => survey.id === id)
 
 /** Why the answers can't be saved, or null if they can. */
 export function invalidSurveyAnswers(survey: SurveyDefinition, answers: unknown): string | null {

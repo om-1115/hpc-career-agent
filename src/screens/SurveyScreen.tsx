@@ -30,7 +30,8 @@ const answered = (question: SurveyQuestion, value: SurveyAnswer | undefined) =>
 /**
  * A student survey (Figma "Student · My Work", screens 04–08): an intro, one
  * question per screen, then a reflection written from their answers that they
- * can edit and keep in their passbook.
+ * can edit and keep in their passbook. A pilot's before and after questions
+ * skip the reflection and are answered once.
  */
 export default function SurveyScreen() {
   const { id = '' } = useParams()
@@ -81,6 +82,7 @@ export default function SurveyScreen() {
 
   const next = () => {
     if (stage.kind === 'question' && stage.index < total - 1) setStage({ kind: 'question', index: stage.index + 1 })
+    else if (stage.kind === 'question' && survey.pilot) void save(false)
     else if (stage.kind === 'question') {
       setReflection(survey.reflect(answers))
       setStage({ kind: 'reflect' })
@@ -113,8 +115,8 @@ export default function SurveyScreen() {
         <button type="button" className="test-nav" onClick={back}>
           Back
         </button>
-        <button type="button" className="test-nav" disabled={!answered(question, answers[question.id])} onClick={next}>
-          {stage.index === total - 1 ? 'Finish' : 'Next'}
+        <button type="button" className="test-nav" disabled={busy || !answered(question, answers[question.id])} onClick={next}>
+          {stage.index === total - 1 ? (busy ? 'Saving…' : 'Finish') : 'Next'}
         </button>
       </>
     ) : undefined
@@ -129,6 +131,12 @@ export default function SurveyScreen() {
       {stage.kind === 'intro' && <Intro survey={survey} doneBefore={doneBefore} onStart={() => setStage({ kind: 'question', index: 0 })} />}
 
       {question && <Question key={question.id} question={question} value={answers[question.id]} onChange={(value) => set(question.id, value)} />}
+
+      {question && error && (
+        <p className="test-error" role="alert">
+          {error}
+        </p>
+      )}
 
       {stage.kind === 'reflect' && (
         <section className="test-card survey-reflect">
@@ -170,7 +178,24 @@ export default function SurveyScreen() {
         </section>
       )}
 
-      {stage.kind === 'done' && (
+      {stage.kind === 'done' && survey.pilot && (
+        <section className="test-card test-card--center">
+          <span className="survey-done" aria-hidden="true">
+            ✓
+          </span>
+          <h2 className="test-card__title">Thank you!</h2>
+          <p className="test-card__body">
+            {survey.id === 'pilot-before'
+              ? 'Your answers are saved. Next: the psychometric test — it’s step 2 on Home.'
+              : 'Your answers are saved. That’s everything for today — thank you for helping make HPC Career better.'}
+          </p>
+          <button type="button" className="career-button" onClick={() => navigate('/student')}>
+            Back to Home
+          </button>
+        </section>
+      )}
+
+      {stage.kind === 'done' && !survey.pilot && (
         <section className="test-card test-card--center">
           <span className="survey-done" aria-hidden="true">
             ✓
@@ -220,7 +245,10 @@ function Intro({ survey, doneBefore, onStart }: { survey: SurveyDefinition; done
           {survey.questions.length} questions · About {survey.minutes} minutes
         </p>
         <p className="survey-intro__note">{survey.privacy}</p>
-        {doneBefore && (
+        {doneBefore && survey.pilot && (
+          <p className="survey-intro__note survey-intro__note--done">You’ve already answered these. Thank you!</p>
+        )}
+        {doneBefore && !survey.pilot && (
           <p className="survey-intro__note survey-intro__note--done">
             You finished this on {new Date(doneBefore).toLocaleDateString('en-IN', { day: 'numeric', month: 'short' })}. Taking it again
             replaces those answers; your earlier reflection stays in your passbook.
@@ -235,9 +263,11 @@ function Intro({ survey, doneBefore, onStart }: { survey: SurveyDefinition; done
           </span>
         ))}
       </div>
-      <button type="button" className="career-button survey-start" onClick={onStart}>
-        {doneBefore ? 'Take it again' : 'Start survey'}
-      </button>
+      {!(doneBefore && survey.pilot) && (
+        <button type="button" className="career-button survey-start" onClick={onStart}>
+          {doneBefore ? 'Take it again' : survey.pilot ? 'Start' : 'Start survey'}
+        </button>
+      )}
     </>
   )
 }

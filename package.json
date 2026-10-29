@@ -14,6 +14,10 @@
     "start:demo": "npm run seed:demo && npm run server",
     "account:add": "tsx server/scripts/addAccount.ts",
     "seed:demo": "tsx server/scripts/seedDemo.ts",
+    "pilot:accounts": "tsx server/scripts/pilotAccounts.ts",
+    "pilot:report": "tsx server/scripts/pilotReport.ts",
+    "pilot:erase": "tsx server/scripts/pilotErase.ts",
+    "start:pilot": "PILOT_MODE=1 npm run server",
     "test": "tsx --test shared/*.test.ts server/*.test.ts"
   },
   "engines": {

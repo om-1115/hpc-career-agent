@@ -1,0 +1,152 @@
+/* The pilot's public results: counts, then before → after, on the test's cards. */
+
+.impact-intro {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+  padding: var(--space-lg);
+  border: 1px solid #bfdbfe;
+  border-radius: 12px;
+  background: var(--surface-primary);
+}
+
+.impact-intro__title {
+  font-size: 18px;
+  font-weight: 700;
+  color: #1e3a8a;
+}
+
+.impact-intro__body {
+  font-size: var(--size-body-md);
+  line-height: var(--lh-body-md);
+  color: var(--text-body);
+}
+
+.impact-intro__note {
+  padding: 10px 12px;
+  border-radius: var(--radius-lg);
+  background: var(--surface-page);
+  font-size: 12px;
+  line-height: 16px;
+  color: #1e3a8a;
+}
+
+.impact-muted {
+  font-size: 12px;
+  line-height: 16px;
+  color: var(--text-muted);
+}
+
+.impact-funnel {
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+  padding: var(--space-sm) var(--space-lg);
+  border: 1px solid var(--border-light);
+  border-radius: 12px;
+  background: var(--surface-page);
+  box-shadow: var(--shadow-card-v2);
+}
+
+.impact-funnel__row {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-md);
+  padding: 9px 0;
+  border-bottom: 1px solid var(--border-light);
+}
+
+.impact-funnel__row:last-child {
+  border-bottom: 0;
+}
+
+.impact-funnel dt {
+  font-size: var(--size-body-md);
+  color: var(--text-body);
+}
+
+.impact-funnel dd {
+  margin: 0;
+  font-size: 17px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  color: var(--text-headings);
+}
+
+.impact-changes {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.impact-change,
+.impact-stat {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-md);
+  padding: var(--space-md) var(--space-lg);
+  border: 1px solid var(--border-light);
+  border-radius: 12px;
+  background: var(--surface-page);
+  box-shadow: var(--shadow-card-v2);
+}
+
+.impact-change__label {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  font-size: var(--size-body-md);
+  font-weight: 600;
+  line-height: var(--lh-body-md);
+  color: var(--text-headings);
+}
+
+.impact-change__note {
+  font-size: 12px;
+  font-weight: 400;
+  color: var(--text-muted);
+}
+
+.impact-change__values {
+  display: flex;
+  flex-shrink: 0;
+  align-items: baseline;
+  gap: 6px;
+  font-variant-numeric: tabular-nums;
+  color: var(--text-muted);
+}
+
+.impact-change__before {
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.impact-change__after {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--text-headings);
+}
+
+.impact-stat {
+  justify-content: flex-start;
+}
+
+.impact-stat__value {
+  flex-shrink: 0;
+  min-width: 56px;
+  font-size: 20px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  color: var(--text-headings);
+}
+
+.impact-stat__label {
+  font-size: var(--size-body-md);
+  line-height: var(--lh-body-md);
+  color: var(--text-body);
+}

@@ -5,8 +5,9 @@
  *
  * Small on purpose: a school's worth of students fits comfortably, and every
  * change is a whole-document read, change and write. In one process those are
- * queued, so changes never overwrite each other; across Vercel instances the
- * last write wins, which is fine for a demo but not for a school's real data.
+ * queued, so changes never overwrite each other; on Redis each change also
+ * holds a short lock, so Vercel instances serving one classroom at once don't
+ * overwrite each other either.
  *
  * Passwords are scrypt hashes with a per-account salt, never plaintext, and a
  * wrong code costs the same scrypt as a wrong password, so timing does not say
@@ -47,6 +48,8 @@ export type Data = {
   /** Each student's latest response to each survey, by survey id. */
   surveys?: Record<string, Record<string, SurveyResponse>>
   alerts?: Alert[]
+  /** Wrong sign-ins per account ("student:P01"), kept here so every server instance sees them. */
+  signInFailures?: Record<string, { count: number; until: number }>
 }
 
 const KEY_LENGTH = 64
@@ -68,10 +71,15 @@ function matches(password: string, stored: string): boolean {
 
 const profileOf = ({ password: _password, ...profile }: StoredAccount): Profile => profile
 
-/** Where the document lives. `read` gives null when nothing has been saved yet. */
+/**
+ * Where the document lives. `read` gives null when nothing has been saved yet.
+ * `lock`, where there is one, is held around each read-change-write and
+ * returns its release.
+ */
 export interface Backend {
   read(): Promise<Data | null>
   write(data: Data): Promise<void>
+  lock?(): Promise<() => Promise<void>>
 }
 
 /** A JSON file, written atomically (a temp file, then rename). */
@@ -89,6 +97,11 @@ export class FileBackend implements Backend {
     renameSync(temp, this.file)
   }
 }
+
+const LOCK_TTL_MS = 5000
+const LOCK_TRIES = 150
+// Delete the lock only if it is still ours (it may have expired and been taken).
+const RELEASE = "if redis.call('GET', KEYS[1]) == ARGV[1] then return redis.call('DEL', KEYS[1]) end return 0"
 
 /** One key in an Upstash Redis database, over its REST API (no client library). */
 export class RedisBackend implements Backend {
@@ -117,13 +130,30 @@ export class RedisBackend implements Backend {
   async write(data: Data): Promise<void> {
     await this.command(['SET', this.key, JSON.stringify(data)])
   }
+
+  async lock(): Promise<() => Promise<void>> {
+    const lockKey = `${this.key}:lock`
+    const token = randomBytes(12).toString('hex')
+    for (let attempt = 0; (await this.command(['SET', lockKey, token, 'NX', 'PX', String(LOCK_TTL_MS)])) !== 'OK'; attempt++) {
+      if (attempt >= LOCK_TRIES) throw new Error('Redis lock: the store stayed busy')
+      await new Promise((resolve) => setTimeout(resolve, 20 + Math.random() * 30))
+    }
+    // The change is already written; if the release fails, the lock expires on its own.
+    return async () => {
+      await this.command(['EVAL', RELEASE, '1', lockKey, token]).catch(() => undefined)
+    }
+  }
 }
 
-/** Redis when Vercel's Upstash integration has set its variables, otherwise the file. */
+/**
+ * Redis when Vercel's Upstash integration has set its variables, otherwise the
+ * file. DATA_KEY picks the Redis key, so a pilot can share a database with the
+ * demo and keep its own data apart.
+ */
 export function backendFromEnv(dataFile: string): Backend {
   const url = process.env.KV_REST_API_URL ?? process.env.UPSTASH_REDIS_REST_URL
   const token = process.env.KV_REST_API_TOKEN ?? process.env.UPSTASH_REDIS_REST_TOKEN
-  return url && token ? new RedisBackend(url, token) : new FileBackend(dataFile)
+  return url && token ? new RedisBackend(url, token, process.env.DATA_KEY || undefined) : new FileBackend(dataFile)
 }
 
 export class Store {
@@ -142,10 +172,15 @@ export class Store {
   /** Read, change and write the document, one change at a time. */
   private update<T>(change: (data: Data) => T): Promise<T> {
     const run = this.pending.then(async () => {
-      const data = await this.read()
-      const out = change(data)
-      await this.backend.write(data)
-      return out
+      const release = await this.backend.lock?.()
+      try {
+        const data = await this.read()
+        const out = change(data)
+        await this.backend.write(data)
+        return out
+      } finally {
+        await release?.()
+      }
     })
     this.pending = run.catch(() => undefined)
     return run
@@ -156,6 +191,28 @@ export class Store {
     const found = (await this.read()).accounts.find((account) => account.role === role && account.code === normaliseCode(code))
     const ok = matches(password, found?.password ?? DUMMY_HASH)
     return found && ok ? profileOf(found) : null
+  }
+
+  /** Whether five wrong sign-ins have locked this account ("student:P01") for now. */
+  async lockedOut(key: string): Promise<boolean> {
+    const record = (await this.read()).signInFailures?.[key]
+    return Boolean(record && record.until > Date.now())
+  }
+
+  /** Count a wrong sign-in; the `max`th in a row locks the account for `lockMs`. */
+  recordFailure(key: string, max: number, lockMs: number): Promise<void> {
+    return this.update((data) => {
+      const record = data.signInFailures?.[key]
+      const count = (record && record.until === 0 ? record.count : 0) + 1
+      data.signInFailures = { ...data.signInFailures, [key]: count >= max ? { count: 0, until: Date.now() + lockMs } : { count, until: 0 } }
+    })
+  }
+
+  async clearFailures(key: string): Promise<void> {
+    if (!(await this.read()).signInFailures?.[key]) return
+    await this.update((data) => {
+      delete data.signInFailures?.[key]
+    })
   }
 
   /** Add an account, or reset an existing one's details and password. */
@@ -229,6 +286,19 @@ export class Store {
       delete data.reflections?.[code]
       delete data.surveys?.[code]
       data.alerts = (data.alerts ?? []).filter((alert) => alert.studentCode !== code)
+    })
+  }
+
+  /** The whole document, read-only, for reports across students (the pilot's impact). */
+  async snapshot(): Promise<Data> {
+    return this.read()
+  }
+
+  /** Delete everyone's data: accounts, results, answers, the lot. */
+  eraseAll(): Promise<void> {
+    return this.update((data) => {
+      for (const key of Object.keys(data)) delete (data as Partial<Data>)[key as keyof Data]
+      Object.assign(data, { accounts: [], results: {} })
     })
   }
 

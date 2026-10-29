@@ -4,7 +4,8 @@
  * Data lives in Upstash Redis when Vercel's integration has set its variables;
  * without them it falls back to a file in /tmp, which lasts only as long as one
  * function instance. The first request on an empty database seeds the demo
- * school, so the public demo always has Asha, Rohan and the rest.
+ * school, so the public demo always has Asha, Rohan and the rest — except in a
+ * pilot (PILOT_MODE=1), whose accounts come from `npm run pilot:accounts`.
  */
 
 import type { IncomingMessage, ServerResponse } from 'node:http'
@@ -13,13 +14,14 @@ import { seedDemo } from './lib/demo.ts'
 import { backendFromEnv } from './lib/store.ts'
 
 const sessionSecret = process.env.SESSION_SECRET ?? ''
-const { app, store } = createApp({ backend: backendFromEnv('/tmp/hpc-career/db.json'), sessionSecret })
+const pilot = process.env.PILOT_MODE === '1'
+const { app, store } = createApp({ backend: backendFromEnv('/tmp/hpc-career/db.json'), sessionSecret, pilot })
 
 let ready: Promise<unknown> | null = null
 const seededOnce = () =>
   (ready ??= store
     .profiles()
-    .then((profiles) => (profiles.length ? null : seedDemo(store)))
+    .then((profiles) => (profiles.length || pilot ? null : seedDemo(store)))
     .catch((cause) => {
       ready = null
       throw cause

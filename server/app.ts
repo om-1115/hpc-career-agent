@@ -1,9 +1,10 @@
 /**
  * The API. Everything the app needs lives under /api:
  *
+ *   GET    /api/config         {mode: 'demo' | 'pilot'}: profile picker, or code + PIN
  *   POST   /api/login          {role, code, password} → {profile, token}
- *   GET    /api/profiles       every profile, for the profile picker
- *   POST   /api/profiles/open  {role, code} → {profile, token}, no password (for now)
+ *   GET    /api/profiles       every profile, for the profile picker (demo only)
+ *   POST   /api/profiles/open  {role, code} → {profile, token}, no password (demo only)
  *   GET    /api/me             who the token belongs to
  *   GET    /api/results/me     the student's saved result, or null
  *   POST   /api/results        {answers} → scored and saved result (students)
@@ -13,24 +14,30 @@
  *   GET    /api/surveys/me     which surveys the student has finished, and when
  *   POST   /api/surveys/:id    {answers, reflection} → saved; the reflection goes in the passbook
  *   GET    /api/class          every student and whether they finished (teachers)
+ *   GET    /api/impact         the pilot's before/after results, anonymous, for anyone
  *   POST   /api/chat/session   a signed conversation handle
  *   POST   /api/chat           {handle, text} → the counsellor's reply as SSE
  *
  * Scores are computed here, never in the browser: the browser sends answers,
  * the server decides what they mean.
+ *
+ * Two modes. The demo opens any profile with a tap. A pilot (`pilot: true`,
+ * PILOT_MODE=1 on the server) is real students: the picker is off, everyone
+ * signs in with the code and PIN on their slip (`npm run pilot:accounts`).
  */
 
 import { randomUUID } from 'node:crypto'
 import express, { type NextFunction, type Request, type Response } from 'express'
 import { invalidAnswers, scoreTest } from '../shared/scoring.ts'
+import { pilotImpact } from '../shared/pilot.ts'
 import { invalidSurveyAnswers, surveyById } from '../shared/surveys.ts'
 import { DONE_SENTINEL, encodeEvent, SSE_HEADERS, type ChatEvent } from './lib/events.ts'
 import { issueSigned, readSigned } from './lib/handle.ts'
 import { offlineTurn } from './lib/offline.ts'
 import { normaliseCode, Store, type Backend, type Profile, type Role } from './lib/store.ts'
 
-/** Where data lives: a JSON file path, or any backend (Redis on Vercel). */
-export type AppConfig = { dataFile?: string; backend?: Backend; sessionSecret: string }
+/** Where data lives: a JSON file path, or any backend (Redis on Vercel); `pilot` for real students. */
+export type AppConfig = { dataFile?: string; backend?: Backend; sessionSecret: string; pilot?: boolean }
 
 const SESSION_TTL_MS = 10 * 60 * 60 * 1000
 const MAX_FAILURES = 5
@@ -38,9 +45,8 @@ const LOCK_MS = 15 * 60 * 1000
 
 type Authed = Request & { profile: Profile }
 
-export function createApp({ dataFile, backend, sessionSecret }: AppConfig) {
+export function createApp({ dataFile, backend, sessionSecret, pilot = false }: AppConfig) {
   const store = new Store(backend ?? dataFile ?? '.data/db.json')
-  const failures = new Map<string, { count: number; until: number }>()
   const app = express()
 
   app.disable('x-powered-by')
@@ -55,35 +61,41 @@ export function createApp({ dataFile, backend, sessionSecret }: AppConfig) {
     next()
   }
 
+  app.get('/api/config', (_req, res) => {
+    res.json({ mode: pilot ? 'pilot' : 'demo' })
+  })
+
   app.post('/api/login', async (req, res) => {
     const { role, code, password } = (req.body ?? {}) as Record<string, unknown>
     if ((role !== 'student' && role !== 'teacher') || typeof code !== 'string' || !code.trim() || typeof password !== 'string' || !password) {
       return res.status(400).json({ error: 'credentials_required' })
     }
 
+    // Misses are kept in the store, so every server instance counts them. Only
+    // real accounts are counted: codes are printed on slips, not secret, and
+    // made-up ones shouldn't grow the document.
     const key = `${role}:${normaliseCode(code)}`
-    const record = failures.get(key)
-    if (record && record.until > Date.now()) return res.status(429).json({ error: 'too_many_attempts' })
+    if (await store.lockedOut(key)) return res.status(429).json({ error: 'too_many_attempts' })
 
     const profile = await store.verify(role, code, password)
     if (!profile) {
-      const count = (record && record.until === 0 ? record.count : 0) + 1
-      failures.set(key, count >= MAX_FAILURES ? { count: 0, until: Date.now() + LOCK_MS } : { count, until: 0 })
+      if (await store.profile(role, code)) await store.recordFailure(key, MAX_FAILURES, LOCK_MS)
       return res.status(401).json({ error: 'invalid_credentials' })
     }
 
-    failures.delete(key)
+    await store.clearFailures(key)
     res.json({ profile, token: issueSigned(profile, sessionSecret, SESSION_TTL_MS) })
   })
 
-  // Open profiles, for now: the app starts on a list of profiles and opens one
-  // with a tap, no password. /api/login above keeps password sign-in for when
-  // the app goes to a school.
+  // Open profiles, for the demo: the app starts on a list of profiles and opens
+  // one with a tap, no password. Off in a pilot, where /api/login is the way in.
   app.get('/api/profiles', async (_req, res) => {
+    if (pilot) return res.status(404).json({ error: 'not_available' })
     res.json({ profiles: await store.profiles() })
   })
 
   app.post('/api/profiles/open', async (req, res) => {
+    if (pilot) return res.status(404).json({ error: 'not_available' })
     const { role, code } = (req.body ?? {}) as Record<string, unknown>
     if ((role !== 'student' && role !== 'teacher') || typeof code !== 'string' || !code.trim()) {
       return res.status(400).json({ error: 'profile_required' })
@@ -166,6 +178,9 @@ export function createApp({ dataFile, backend, sessionSecret }: AppConfig) {
     if (text.length > 500) return res.status(400).json({ error: 'reflection must be up to 500 characters' })
 
     const code = (req as Authed).profile.code
+    // The pilot's questions are answered once: a second "before" after the
+    // test would no longer be before anything.
+    if (survey.pilot && (await store.surveyResponses(code))[survey.id]) return res.status(409).json({ error: 'already_answered' })
     const completedAt = new Date().toISOString()
     await store.saveSurvey(code, survey.id, { answers: answers as Record<string, unknown>, completedAt })
     const saved = text ? await store.addReflection(code, text, completedAt, survey.title) : null
@@ -185,6 +200,22 @@ export function createApp({ dataFile, backend, sessionSecret }: AppConfig) {
       }
     })
     res.json({ students })
+  })
+
+  // The pilot's results, for anyone: counts, and before/after measures once
+  // enough students are paired that no one can be picked out (shared/pilot.ts).
+  app.get('/api/impact', async (_req, res) => {
+    const data = await store.snapshot()
+    const students = data.accounts.filter((account) => account.role === 'student')
+    const tests = Object.fromEntries(
+      students.map(({ code }) => {
+        const history = data.resultHistory?.[code] ?? []
+        const current = data.results[code]
+        const times = history.map((result) => result.completedAt)
+        return [code, current && !times.includes(current.completedAt) ? [...times, current.completedAt] : times]
+      }),
+    )
+    res.json(pilotImpact({ students: students.length, surveys: data.surveys ?? {}, tests }))
   })
 
   // The counsellor. Identity is minted here and handed out only inside a

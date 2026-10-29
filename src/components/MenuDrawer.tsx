@@ -1,4 +1,5 @@
 import { useEffect } from 'react'
+import { useAppMode } from '../auth/useAppMode'
 import './MenuDrawer.css'
 
 export type DrawerProfile = {
@@ -16,6 +17,7 @@ type Props = {
 
 /** Who is signed in, and the way out. Roles are a sign-in choice now, not a switch. */
 export function MenuDrawer({ open, onClose, profile, onSignOut }: Props) {
+  const pilot = useAppMode() === 'pilot'
   useEffect(() => {
     if (!open) return
     const onKey = (event: KeyboardEvent) => {
@@ -49,7 +51,7 @@ export function MenuDrawer({ open, onClose, profile, onSignOut }: Props) {
             onSignOut()
           }}
         >
-          Switch profile
+          {pilot ? 'Sign out' : 'Switch profile'}
         </button>
       </aside>
     </div>

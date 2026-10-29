@@ -3,6 +3,7 @@
 import type { TestResult } from '../../shared/scoring'
 import type { Answers, RiasecType } from '../../shared/test'
 import type { SurveyAnswers } from '../../shared/surveys'
+import type { Impact } from '../../shared/pilot'
 
 export type Role = 'student' | 'teacher'
 export type Profile = { role: Role; code: string; name: string; classLine?: string }
@@ -39,6 +40,12 @@ async function call<T>(path: string, init: RequestInit = {}, token?: string): Pr
   return body as T
 }
 
+/** 'demo' opens profiles with a tap; 'pilot' signs in with a code and PIN. */
+export type AppMode = 'demo' | 'pilot'
+export const appConfig = () => call<{ mode: AppMode }>('/config')
+
+export const impact = () => call<Impact>('/impact')
+
 export const login = (role: Role, code: string, password: string) =>
   call<{ profile: Profile; token: string }>('/login', { method: 'POST', body: JSON.stringify({ role, code, password }) })
 
@@ -47,7 +54,7 @@ export const listProfiles = () => call<{ profiles: Profile[] }>('/profiles')
 export const openProfile = (role: Role, code: string) =>
   call<{ profile: Profile; token: string }>('/profiles/open', { method: 'POST', body: JSON.stringify({ role, code }) })
 
-export const myResult =(token: string) => call<{ result: TestResult | null }>('/results/me', {}, token)
+export const myResult = (token: string) => call<{ result: TestResult | null }>('/results/me', {}, token)
 
 export const submitAnswers = (token: string, answers: Answers) =>
   call<{ result: TestResult }>('/results', { method: 'POST', body: JSON.stringify({ answers }) }, token)
@@ -75,11 +82,13 @@ export const submitSurvey = (token: string, id: string, answers: SurveyAnswers, 
 export function describeError(error: unknown): string {
   switch (error instanceof ApiError ? error.code : '') {
     case 'invalid_credentials':
-      return 'Those details don’t match. Check your code and password and try again.'
+      return 'Those details don’t match. Check the code and PIN on your slip and try again.'
     case 'too_many_attempts':
       return 'Too many tries. This account is locked for 15 minutes.'
     case 'credentials_required':
-      return 'Fill in your code and password.'
+      return 'Fill in your code and PIN.'
+    case 'already_answered':
+      return 'You’ve already answered these. Thank you!'
     case 'no_such_profile':
       return 'That profile isn’t here any more. Pick another one.'
     case 'unreachable':

@@ -61,10 +61,9 @@ The app opens on **Choose your profile**: tap one, no password needed.
 | Priya Nair, Imran Khan (`S003`, `S004`) | results to explore |
 | Meera Sharma (`T001`) | the teacher's class view |
 
-Profiles open without a password for now, so never run `seed:demo` against
-real student data. Password sign-in is still built into the API
-(`/api/login`: hashed passwords and a 5-try lock) for when the app goes to a
-school.
+Profiles open without a password in the demo, so never run `seed:demo`
+against real student data. A pilot with real students runs in pilot mode
+instead, with a code and PIN for each student ([below](#run-a-pilot)).
 
 ### Run it on Vercel
 
@@ -76,6 +75,28 @@ Upstash Redis, connected through Vercel's Storage tab (it sets
 database seeds the demo school. Set `SESSION_SECRET` in the project's
 environment variables. Locally, with no Redis variables, the app keeps using
 the JSON file in `.data/`.
+
+### Run a pilot
+
+The [pilot kit](docs/pilot/README.md) tries the app with one real class and
+measures whether it helps, on a second Vercel project with its own data:
+
+- **Pilot mode** (`PILOT_MODE=1`): no profile list; each student signs in with
+  the code and six-digit PIN on a printed slip; Home shows the day's three
+  steps in order; Live HPC's sample data is hidden.
+- **Before and after questions**: the same three, before the test and after
+  the report — how many careers they can write down, whether they know the
+  route to the work they want, how sure they are about a stream — plus how
+  well the report fits them. Each student is compared with themselves.
+- **A public, anonymous results page** at `/impact`: counts only until five
+  students have done all three steps.
+- **Scripts**: `pilot:accounts` (accounts, PINs and printable slips),
+  `pilot:report` (results as Markdown) and `pilot:erase` (delete it all).
+- **Paper**: a letter and consent slip for parents (English, with a Hindi
+  draft), the teacher's 40-minute plan with an observation sheet, and a results
+  template.
+
+No pilot has run yet.
 
 ## What a student does
 
@@ -120,8 +141,8 @@ The evidence for each, in this repository:
 | --- | --- |
 | **Size of the problem** | 24.8 crore students in Indian schools (UDISE+ 2023-24), and every one of them faces a stream decision around Class 10. The app runs on any phone browser, including shared classroom phones. |
 | **Severity of the problem** | 93% of 10,000 students surveyed knew only 7 of about 250 career options (Mindler, 2019). Only 9.36% of low-income Class 9–12 students had ever had career guidance, and family members (30%) and teachers (13%) were the top influences (Bharat Career Aspiration Report 2024). In the HPC pilot in Kangra, Himachal Pradesh, a Grade 9 student answered "Which stream will you choose?" without knowing what "stream" meant, and a Grade 12 student aiming for the Army or Navy didn't know which exam leads there ([field research](docs/user-research.md)). The choice sets a student's next decade of study and work. What it costs: Classes 9–10 lose more students than any other stage of school (7.0% secondary dropout in 2025-26, [UDISE+ 2025-26](https://www.pib.gov.in/PressReleasePage.aspx?PRID=2282141)), and in 2022, 82.9% of India's unemployed were aged 15–29 and 65.7% were young people with secondary education or more ([India Employment Report 2024](https://www.ilo.org/publications/india-employment-report-2024-youth-employment-education-and-skills), IHD and ILO). |
-| **Quality of the solution** | A complete journey — test, report, careers with Indian routes, passbook, counsellor, teacher view — built on Holland's RIASEC model and the public-domain Mini-IPIP, scored on the server, with strength-based wording and honest limits ([the test, honestly](#the-test-honestly)). Signed sessions, role-gated pages, password sign-in ready in the API, 32 automated tests and CI on every push. The counsellor agent is built in AgentFoundry, with its tools wired to the app's tested code and a 10-case eval suite that passes ([the agent](#the-counsellor-agent-built-in-agentfoundry)). |
-| **Proven impact** | Not deployed for this hackathon, so there is no data on HPC Career's use yet. What we have is discovery research from the HPC pilot in two Kangra government schools (about 10 students and their principals, [findings](docs/user-research.md)), which shaped the design: plain-language results, routes from Class 10, one-tap profiles for shared phones. The repository runs in two commands with a seeded demo school, and the [deck](docs/HPC-Career-Explainer.pdf) sets out what a pilot would measure: students who finish, reports discussed at home, and teacher use in subject choice. |
+| **Quality of the solution** | A complete journey — test, report, careers with Indian routes, passbook, counsellor, teacher view — built on Holland's RIASEC model and the public-domain Mini-IPIP, scored on the server, with strength-based wording and honest limits ([the test, honestly](#the-test-honestly)). Signed sessions, role-gated pages, a pilot mode with PIN sign-in and a lock that holds across server instances, 40 automated tests and CI on every push. The counsellor agent is built in AgentFoundry, with its tools wired to the app's tested code and a 10-case eval suite that passes ([the agent](#the-counsellor-agent-built-in-agentfoundry)). |
+| **Proven impact** | Not used in a school yet, so there is no data on HPC Career's use; the [public demo](https://hpc-career-agent.vercel.app) is live. What we have is discovery research from the HPC pilot in two Kangra government schools (about 10 students and their principals, [findings](docs/user-research.md)), which shaped the design: plain-language results, routes from Class 10, one-tap profiles for shared phones. The repository runs in two commands with a seeded demo school, and a [pilot kit](docs/pilot/README.md) is ready: PIN sign-in, the same three questions before the test and after the report, a public anonymous results page, and parent consent and teacher materials. No pilot has run yet. |
 
 ## The test, honestly
 
@@ -211,7 +232,8 @@ not sign everyone out.
   evals on that model.
 - Hindi and other Indian languages for the test and report.
 - More careers, with links to official course and exam pages.
-- Deployment and usage data from a pilot school.
+- Run the [pilot](docs/pilot/README.md) with a partner school and publish its
+  results.
 
 ## Licence
 

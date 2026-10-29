@@ -60,9 +60,9 @@ passbook, open source under MIT:
   sample content until a school records them).
 - **Teacher view:** who has finished, the class's spread of interests, and each
   student's interest code.
-- Student and teacher profiles that open with one tap (password sign-in is
-  ready in the API for schools), role-gated pages, 32 automated tests and CI on
-  every push.
+- Student and teacher profiles that open with one tap in the demo, and a pilot
+  mode for real students (a code and PIN on a printed slip), role-gated pages,
+  40 automated tests and CI on every push.
 
 **How we used AgentFoundry:** we built the counsellor agent in AF
 (`counsellor/`, screenshots in `docs/af/`):
@@ -146,9 +146,16 @@ findings, what we changed and what to test next:
 https://github.com/om-1115/hpc-career-agent/blob/main/docs/user-research.md
 
 Anyone can run the app locally in two commands (`npm run seed:demo`,
-`npm run dev:all`) and pick a profile from a demo school. A pilot of HPC Career
-would measure students who finish, reports discussed at home, and teacher use
-in subject choice.
+`npm run dev:all`) and pick a profile from a demo school.
+
+A pilot kit is built and ready, though no pilot has run yet: a pilot mode with
+a code and PIN on a printed slip for each student, the same three questions
+before the psychometric test and after the report (how many careers they can
+write down, whether they know the route to the work they want, how sure they
+are about a stream), a public anonymous results page that shows only totals
+and only once five students have done all three steps, a parent consent letter
+(English and Hindi), and the teacher's 40-minute plan:
+https://github.com/om-1115/hpc-career-agent/tree/main/docs/pilot
 
 **Track / category**
 

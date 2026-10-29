@@ -740,6 +740,14 @@
   text-decoration: line-through;
 }
 
+.hpc-todo__item:disabled {
+  cursor: default;
+}
+
+.hpc-todo__item--locked {
+  opacity: 0.55;
+}
+
 .hpc-todo__text {
   display: flex;
   flex: 1;

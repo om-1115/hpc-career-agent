@@ -13,9 +13,9 @@ import type { AddressInfo } from 'node:net'
 import { createApp } from './app.ts'
 import { ALL_ITEMS, INTEREST_ITEMS } from '../shared/test.ts'
 
-async function start() {
-  const dataFile = join(mkdtempSync(join(tmpdir(), 'hpc-career-')), 'db.json')
-  const { app, store } = createApp({ dataFile, sessionSecret: 'test-secret' })
+/** A server on a throwaway data file, or on `dataFile` to be a second instance over the same data. */
+async function start({ pilot = false, dataFile = join(mkdtempSync(join(tmpdir(), 'hpc-career-')), 'db.json') } = {}) {
+  const { app, store } = createApp({ dataFile, sessionSecret: 'test-secret', pilot })
   await store.upsert({ role: 'student', code: 's001', name: 'Asha Kumari', classLine: 'Class 10 · A' }, 'student-pass')
   await store.upsert({ role: 'teacher', code: 'T001', name: 'Meera Sharma' }, 'teacher-pass')
 
@@ -83,6 +83,55 @@ test('five misses lock an account, even against the right password', async (t) =
   t.after(() => server.close())
   for (let attempt = 0; attempt < 5; attempt++) assert.equal((await login('student', 'S001', 'nope-nope')).status, 401)
   assert.equal((await login('student', 'S001', 'student-pass')).status, 429)
+})
+
+test('misses are kept with the data, so every server instance counts them', async (t) => {
+  const first = await start()
+  const second = await start({ dataFile: first.dataFile })
+  t.after(() => {
+    first.server.close()
+    second.server.close()
+  })
+  for (let attempt = 0; attempt < 3; attempt++) assert.equal((await first.login('student', 'S001', 'nope-nope')).status, 401)
+  for (let attempt = 0; attempt < 2; attempt++) assert.equal((await second.login('student', 'S001', 'nope-nope')).status, 401)
+  assert.equal((await first.login('student', 'S001', 'student-pass')).status, 429)
+  // A made-up code is refused the same way, and leaves nothing behind.
+  assert.equal((await first.login('student', 'S999', 'nope-nope')).status, 401)
+  assert.deepEqual(Object.keys(JSON.parse(readFileSync(first.dataFile, 'utf8')).signInFailures), ['student:S001'])
+})
+
+test('a pilot: no profile picker, sign-in with code and PIN, its questions answered once', async (t) => {
+  const demo = await start()
+  const pilot = await start({ pilot: true })
+  t.after(() => {
+    demo.server.close()
+    pilot.server.close()
+  })
+  assert.deepEqual(await (await demo.call('/config')).json(), { mode: 'demo' })
+  assert.deepEqual(await (await pilot.call('/config')).json(), { mode: 'pilot' })
+
+  assert.equal((await pilot.call('/profiles')).status, 404)
+  assert.equal((await pilot.call('/profiles/open', { method: 'POST', body: JSON.stringify({ role: 'student', code: 'S001' }) })).status, 404)
+  const student = await pilot.token('student', 'S001', 'student-pass')
+  assert.ok(student)
+
+  const before = { careers: 'teacher, nurse', route: 'no', stream: 2, guided: 'no' }
+  const first = await pilot.call('/surveys/pilot-before', { method: 'POST', token: student, body: JSON.stringify({ answers: before, reflection: '' }) })
+  assert.equal(first.status, 200)
+  const again = await pilot.call('/surveys/pilot-before', { method: 'POST', token: student, body: JSON.stringify({ answers: before, reflection: '' }) })
+  assert.equal(again.status, 409)
+  assert.equal(((await (await pilot.call('/passbook', { token: student })).json()) as { entries: unknown[] }).entries.length, 0)
+
+  // The public page: counts only, for anyone, until enough students are paired.
+  assert.deepEqual(await (await pilot.call('/impact')).json(), {
+    students: 1,
+    answeredBefore: 1,
+    finishedTest: 0,
+    answeredAfter: 0,
+    paired: 0,
+    minimum: 5,
+    results: null,
+  })
 })
 
 test('a student submits answers; the server scores, saves and returns them', async (t) => {
