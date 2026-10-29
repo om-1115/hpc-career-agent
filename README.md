@@ -13,6 +13,10 @@ Built for **Code for a Billion — Bharat Agentic-AI Hackathon 2026**
 
 [![CI](https://github.com/om-1115/hpc-career-agent/actions/workflows/ci.yml/badge.svg)](https://github.com/om-1115/hpc-career-agent/actions/workflows/ci.yml)
 
+**Live demo: [hpc-career-agent.vercel.app](https://hpc-career-agent.vercel.app)** — tap a
+student or teacher profile, no sign-up (demo data only; the first visit after a
+quiet spell can take a few seconds).
+
 **Pitch deck and demo video:** [slides (.pptx)](docs/HPC-Career-Explainer.pptx) ·
 [slides (PDF)](docs/HPC-Career-Explainer.pdf) ·
 [watch the 3-minute explainer with a live demo](https://drive.google.com/file/d/1j4Z9LbF3U3TctUBFZJVDrT7gIAyu70To/view?usp=sharing) ([MP4 in the repo](docs/HPC-Career-Demo.mp4)) ·

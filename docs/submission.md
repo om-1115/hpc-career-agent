@@ -80,9 +80,10 @@ https://github.com/om-1115/hpc-career-agent
 
 **Demo URL (live app or video)**
 
-https://drive.google.com/file/d/1j4Z9LbF3U3TctUBFZJVDrT7gIAyu70To/view?usp=sharing
+Live app: https://hpc-career-agent.vercel.app
+Video: https://drive.google.com/file/d/1j4Z9LbF3U3TctUBFZJVDrT7gIAyu70To/view?usp=sharing
 
-(The 2:43 captioned explainer with a live demo; also in the repo as
+(The live app opens on the demo school's profiles, no sign-up. The video is the 2:43 captioned explainer with a live demo; also in the repo as
 `docs/HPC-Career-Demo.mp4`.)
 
 Slides: https://github.com/om-1115/hpc-career-agent/blob/main/docs/HPC-Career-Explainer.pdf
@@ -109,8 +110,9 @@ the Army or Navy had no idea which exam leads there or when it opens.
 
 **Deployment & impact data** *(optional, judged — 25%)*
 
-Not deployed for this hackathon, so there is no data yet on students using HPC
-Career itself.
+Not deployed to a school yet, so there is no data yet on students using HPC
+Career itself. A public demo with a sample school is live at
+https://hpc-career-agent.vercel.app.
 
 What we do have is discovery research from the Holistic Progress Card pilot in
 two government schools in Kangra, Himachal Pradesh (GSSS Kachhiari and GSSS
