@@ -53,13 +53,15 @@ passbook, open source under MIT:
   words, explains "stream" inside the question, has an "I don't understand
   this question" button, and ends by writing the answers back as a
   first-person reflection the student edits and keeps in their passbook.
-- **Live HPC:** the student's progress card for the term so far — about me,
-  their reflections, projects, and how each competency is growing term by term
-  (projects and competencies are sample content until a school records them).
+- **Live HPC:** the student's progress card for the term, with charts —
+  attendance by month, growth since last year, and how the student, their group
+  and their teacher each see every competency (the 360° view) — plus insights
+  and a to-do list on every page (attendance, projects and competencies are
+  sample content until a school records them).
 - **Teacher view:** who has finished, the class's spread of interests, and each
   student's interest code.
 - Student and teacher profiles that open with one tap (password sign-in is
-  ready in the API for schools), role-gated pages, 24 automated tests and CI on
+  ready in the API for schools), role-gated pages, 32 automated tests and CI on
   every push.
 
 **How we used AgentFoundry:** we built the counsellor agent in AF
