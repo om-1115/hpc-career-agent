@@ -101,13 +101,33 @@ only 9.36% had ever received career guidance, and family members (30%) and
 teachers (13%) were the top influences on career choice. A stream chosen
 without guidance shapes a student's next decade of study and work.
 
+We saw this first-hand in the Holistic Progress Card pilot in Kangra, Himachal
+Pradesh (GSSS Kachhiari and GSSS Khaniara). A Grade 9 student filled in "Which
+stream will you choose?" without knowing what "stream" meant ("Bhar diya
+tha... par stream ka matlab pata nahi tha"), and a Grade 12 student aiming for
+the Army or Navy had no idea which exam leads there or when it opens.
+
 **Deployment & impact data** *(optional, judged — 25%)*
 
-Not deployed for this hackathon: the entry is the open-source repository, the
-deck and the demo video. Anyone can run it locally in two commands
-(`npm run seed:demo`, `npm run dev:all`) with a demo school of one teacher and
-five students. The deck's "How we will show impact" slide sets out what a pilot
-would measure: students who finish, reports discussed at home, and teacher use
+Not deployed for this hackathon, so there is no data yet on students using HPC
+Career itself.
+
+What we do have is discovery research from the Holistic Progress Card pilot in
+two government schools in Kangra, Himachal Pradesh (GSSS Kachhiari and GSSS
+Khaniara): a conversation with 10 students, Grade 9 and Grade 12 interviews,
+and principals' feedback, while students used the state's existing assessment
+bots. It found that students answer career questions they don't understand,
+know a destination but not the route, can't log in on day one (no phones at
+school, unknown codes), split roughly half and half between choosing options
+and writing their own answers, and ignore tools nobody explains. HPC Career was
+designed around these findings: plain-language results, a route from Class 10
+for every career, and one-tap profiles for shared classroom phones. Full
+findings, what we changed and what to test next:
+https://github.com/om-1115/hpc-career-agent/blob/main/docs/user-research.md
+
+Anyone can run the app locally in two commands (`npm run seed:demo`,
+`npm run dev:all`) and pick a profile from a demo school. A pilot of HPC Career
+would measure students who finish, reports discussed at home, and teacher use
 in subject choice.
 
 **Track / category**
