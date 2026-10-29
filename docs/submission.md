@@ -80,7 +80,7 @@ https://github.com/om-1115/hpc-career-agent
 
 **Demo URL (live app or video)**
 
-*[The video is `docs/HPC-Career-Demo.mp4` (2:58, captioned). For judges, upload
+*[The video is `docs/HPC-Career-Demo.mp4` (2:43, captioned). For judges, upload
 it to YouTube (unlisted) or Google Drive and paste that link. The direct GitHub
 link also works but downloads rather than plays in some browsers:
 https://github.com/om-1115/hpc-career-agent/raw/main/docs/HPC-Career-Demo.mp4]*
