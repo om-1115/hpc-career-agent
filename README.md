@@ -27,7 +27,8 @@ quiet spell can take a few seconds).
   <img src="docs/screens/08-report-top.png" width="200" alt="A career report: You're a Doer and a Thinker, with interest bars">
   <img src="docs/screens/11-explore-careers.png" width="200" alt="Explore careers, sorted by best fit, each with the route from Class 10">
   <img src="docs/screens/14-teacher-class.png" width="200" alt="The teacher's class view: who has finished and each student's interest code">
-  <img src="docs/screens/17-live-hpc.png" width="200" alt="Live HPC: the student's progress card for the term, parts A to F">
+  <img src="docs/screens/17-live-hpc.png" width="200" alt="Live HPC: stat tiles and the student's progress card for the term, parts A to F">
+  <img src="docs/screens/18-live-hpc-growing.png" width="200" alt="Live HPC, How I'm growing: insights, competency levels and charts">
   <img src="docs/screens/20-survey-reflection.png" width="200" alt="The end of the Looking Forward survey: a reflection written from the student's answers, ready to edit and save">
 </p>
 
@@ -89,11 +90,15 @@ the JSON file in `.data/`.
 6. **Keeps a career passbook** — every test (a retake keeps the old one), every
    plan and their own reflections, on one dated timeline. They come back each
    year, see how they have grown, and decide with evidence, not guesswork.
-7. **Opens Live HPC** — their progress card for the term so far, in six parts
-   (About me, What I said, My projects, How I'm growing, What my teacher said,
-   Summary), with each competency's level and how it has grown term by term.
-   About me and What I said come from their own test and reflections; projects
-   and competencies are sample content until a school records them.
+7. **Opens Live HPC** — their progress card for the term so far: stat tiles,
+   six parts (About me, What I said, My projects, How I'm growing, What my
+   teacher said, Summary) and charts of attendance, growth since last year,
+   how they, their group and their teacher each see every competency (the 360°
+   view), and time beyond the classroom. Every page has insights (strengths,
+   fastest growth, where views differ, deadlines) and a to-do list they tick
+   off; What I said lets them write a reflection there and shows which surveys
+   are left. Interests and reflections are the student's own data; attendance,
+   projects and competencies are sample content until a school records them.
 8. **Takes the term's surveys** — Skills, Looking Forward, and Goal Setting
    (academic and non-academic), from the Home screen. Each mixes options with
    the student's own words, explains words like "stream" inside the question,

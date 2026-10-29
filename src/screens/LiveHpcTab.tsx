@@ -3,13 +3,71 @@ import type { Session } from '../auth/AuthProvider'
 import { myResult, passbook, type PassbookEntry } from '../auth/api'
 import { TYPE_COPY } from '../../shared/report'
 import type { TestResult } from '../../shared/scoring'
-import { attendance, competencies, LEVELS, project, TERM, type Competency } from '../data/liveHpc'
+import { activities, attendance, ATTENDANCE_NEEDED, attendanceByMonth, competencies, daysPresent, LEVELS, project, schoolDays, TERM, type Competency } from '../data/liveHpc'
+import { ActivitiesChart, AttendanceChart, GrowthChart, ViewsChart, ViewsRow } from './LiveHpcCharts'
+import { Checklist, ContributionChart, InterestBars, Insights, ProjectTimeline, ReflectionComposer, SurveyTodo, type Insight } from './LiveHpcWidgets'
 import './LiveHpc.css'
+import './Survey.css'
 
 type View = 'record' | 'about' | 'said' | 'projects' | 'growing' | `competency:${string}`
 
 const date = (iso: string) => new Date(iso).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })
 const step = (competency: Competency) => LEVELS.indexOf(competency.level) + 1
+const grewBy = (competency: Competency) => competency.history[competency.history.length - 1].step - competency.history[0].step
+const percent = (month: (typeof attendanceByMonth)[number]) => Math.round((month.present / month.days) * 100)
+const names = (items: Competency[]) => {
+  const all = items.map((item) => item.name)
+  return all.length < 2 ? (all[0] ?? '') : `${all.slice(0, -1).join(', ')} and ${all[all.length - 1]}`
+}
+/** How the student's own rating compares with their group's and teacher's: + means they rate themselves higher. */
+const selfGap = (competency: Competency) => competency.views.self - (competency.views.peers + competency.views.teacher) / 2
+
+function attendanceInsights(): Insight[] {
+  const sorted = [...attendanceByMonth].sort((a, b) => percent(b) - percent(a))
+  const overall = Math.round((daysPresent / schoolDays) * 100)
+  return [
+    { icon: '📅', title: `${overall}% this term`, text: `${overall - ATTENDANCE_NEEDED} points above the ${ATTENDANCE_NEEDED}% most boards ask for.` },
+    { icon: '⭐', title: `Best month: ${sorted[0].month}`, text: `${percent(sorted[0])}% — ${sorted[0].present} of ${sorted[0].days} days.` },
+    { icon: '🔎', title: `Lowest month: ${sorted[sorted.length - 1].month}`, text: `${percent(sorted[sorted.length - 1])}%. ${sorted[sorted.length - 1].days - sorted[sorted.length - 1].present} days missed — worth checking you caught up.` },
+  ]
+}
+
+function growthInsights(): Insight[] {
+  const best = Math.max(...competencies.map(step))
+  const fastest = Math.max(...competencies.map(grewBy))
+  const gap = [...competencies].sort((a, b) => Math.abs(selfGap(b)) - Math.abs(selfGap(a)))[0]
+  return [
+    { icon: '💪', title: 'Your strengths', text: `${names(competencies.filter((item) => step(item) === best))} — ${LEVELS[best - 1]} now.` },
+    {
+      icon: '📈',
+      title: 'Growing fastest',
+      text: `${names(competencies.filter((item) => grewBy(item) === fastest))}: up ${fastest === 1 ? 'a full step' : `${fastest} steps`} since last year.`,
+    },
+    selfGap(gap) > 0
+      ? { icon: '💬', title: 'Worth a conversation', text: `You rate your ${gap.name.toLowerCase()} higher than your group and teacher do. Ask your teacher what the next step would look like.` }
+      : { icon: '🌱', title: 'Better than you think', text: `Your group and teacher rate your ${gap.name.toLowerCase()} higher than you do.` },
+  ]
+}
+
+function competencyInsights(competency: Competency): Insight[] {
+  const gap = selfGap(competency)
+  const views: Insight =
+    gap === 0
+      ? { icon: '🤝', title: 'Everyone agrees', text: `You, your group and your teacher all see ${competency.level.toLowerCase()} ${competency.name.toLowerCase()}.` }
+      : gap > 0
+        ? { icon: '💬', title: 'You see it higher', text: 'You rate yourself above how your group and teacher see you. Ask them for one example of the next step.' }
+        : { icon: '🌱', title: 'Others see it higher', text: 'Your group and teacher rate you higher than you rate yourself. Trust the evidence.' }
+  const next = step(competency) < LEVELS.length ? LEVELS[step(competency)] : null
+  return [
+    views,
+    {
+      icon: '📈',
+      title: grewBy(competency) >= 1 ? `Up ${grewBy(competency) === 1 ? 'a step' : `${grewBy(competency)} steps`} since last year` : grewBy(competency) > 0 ? 'Growing since last year' : 'Holding steady',
+      text: competency.trend,
+    },
+    ...(next ? [{ icon: '🎯', title: `Next: ${next}`, text: 'The tips below are small ways to get there this month.' }] : []),
+  ]
+}
 
 /**
  * The student's live Holistic Progress Card (Figma "Student · My Record"):
@@ -47,9 +105,24 @@ export function LiveHpcTab({ session, onOpenCareer }: { session: Session; onOpen
             {interestCode ? 'See your career profile' : 'Take the career test'}
           </button>
         </Panel>
+        {result && <InterestBars result={result} />}
+        <Insights items={attendanceInsights()} />
         <Panel label="Attendance">
           <p className="hpc-record__panel-text">{attendance}</p>
         </Panel>
+        <AttendanceChart />
+        <ActivitiesChart />
+        <Checklist
+          title="To do"
+          owner={session.code}
+          listId="about"
+          items={[
+            ...(result ? [] : [{ id: 'test', text: 'Take the career test to add your interests' }]),
+            { id: 'attendance', text: `Keep attendance above 90% in November` },
+            { id: 'activity', text: 'Try one new club or activity this term' },
+            { id: 'share', text: 'Show this page to someone at home' },
+          ]}
+        />
       </Detail>
     )
   }
@@ -57,6 +130,21 @@ export function LiveHpcTab({ session, onOpenCareer }: { session: Session; onOpen
   if (view === 'said') {
     return (
       <Detail title="What I said" subtitle="Part B · your reflections" onBack={back}>
+        {reflections && (
+          <Insights
+            items={[
+              { icon: '✍️', title: `${reflections.length} reflection${reflections.length === 1 ? '' : 's'}`, text: reflections.length ? `The latest on ${date(reflections[0].at)}.` : 'Your first one can be a single sentence.' },
+              {
+                icon: '📋',
+                title: `${reflections.filter((reflection) => reflection.source).length} from surveys`,
+                text: 'Each survey ends with a reflection written from your answers, which you can edit.',
+              },
+            ]}
+          />
+        )}
+        <ReflectionComposer session={session} onSaved={(entry) => setReflections((current) => [entry, ...(current ?? [])])} />
+        <SurveyTodo session={session} />
+        <p className="hpc-record__eyebrow">Your reflections</p>
         {reflections?.length ? (
           <ul className="hpc-record__sources">
             {reflections.map((reflection) => (
@@ -72,8 +160,8 @@ export function LiveHpcTab({ session, onOpenCareer }: { session: Session; onOpen
         ) : (
           <p className="hpc-record__panel-text">No reflections yet this term. Each survey on your Home screen ends with one, or write a short note in your passbook.</p>
         )}
-        <button type="button" className="hpc-record__primary" onClick={onOpenCareer}>
-          Write a reflection in your passbook
+        <button type="button" className="hpc-record__link" onClick={onOpenCareer}>
+          See them all in your career passbook
         </button>
       </Detail>
     )
@@ -83,11 +171,26 @@ export function LiveHpcTab({ session, onOpenCareer }: { session: Session; onOpen
     return (
       <Detail title="My projects" subtitle="Part C" onBack={back}>
         <Panel label={project.title}>
+          <p className="hpc-record__panel-text">{project.question}</p>
           <Steps step={project.stage} of={project.stages} tone="action" />
           <p className="hpc-record__panel-text">
             Stage {project.stage} of {project.stages} · {project.role} · {project.group}
           </p>
         </Panel>
+        <Insights
+          items={[
+            { icon: '⏳', title: `Next deadline: ${project.steps[project.stage - 1].date.replace('Due ', '')}`, text: `${project.steps[project.stage - 1].name} — ${project.steps[project.stage - 1].detail.toLowerCase()}.` },
+            (() => {
+              const total = project.contributions.reduce((sum, member) => sum + member.hours, 0)
+              const mine = project.contributions.find((member) => member.name === 'You')!.hours
+              return { icon: '🤝', title: `${Math.round((mine / total) * 100)}% of the group’s hours`, text: `${mine} of ${total} hours — a fair share for a group of ${project.contributions.length}.` }
+            })(),
+            { icon: '📝', title: `Your role: ${project.role}`, text: 'You keep the group’s readings in one place, so everyone works from the same numbers.' },
+          ]}
+        />
+        <ProjectTimeline />
+        <Checklist title="My tasks" owner={session.code} listId="project" items={project.tasks} />
+        <ContributionChart />
       </Detail>
     )
   }
@@ -95,6 +198,8 @@ export function LiveHpcTab({ session, onOpenCareer }: { session: Session; onOpen
   if (view === 'growing') {
     return (
       <Detail title="How I'm growing" subtitle="Part D · 4 competencies" onBack={back}>
+        <Insights items={growthInsights()} />
+        <p className="hpc-record__eyebrow">Tap one to see more</p>
         <div className="hpc-record__list">
           {competencies.map((competency) => (
             <button
@@ -113,6 +218,16 @@ export function LiveHpcTab({ session, onOpenCareer }: { session: Session; onOpen
             </button>
           ))}
         </div>
+        <GrowthChart rows={competencies} />
+        <ViewsChart rows={competencies} />
+        <Checklist
+          title="This month’s focus"
+          owner={session.code}
+          listId="growing"
+          items={competencies
+            .filter((item) => item.level === 'Developing' || item.level === 'Beginning')
+            .flatMap((item) => item.tips.slice(0, 2).map((tip, index) => ({ id: `${item.id}-${index}`, text: `${item.name}: ${tip}` })))}
+        />
         <Note />
       </Detail>
     )
@@ -123,6 +238,7 @@ export function LiveHpcTab({ session, onOpenCareer }: { session: Session; onOpen
     if (!competency) return null
     return (
       <Detail title={competency.name} subtitle="Part D · how I'm growing" onBack={back}>
+        <Insights items={competencyInsights(competency)} />
         <p className="hpc-record__eyebrow">Right now</p>
         <div className="hpc-record__panel">
           <div className="hpc-record__now-head">
@@ -135,6 +251,11 @@ export function LiveHpcTab({ session, onOpenCareer }: { session: Session; onOpen
           </div>
           <Steps step={step(competency)} of={LEVELS.length} tone={competency.level === 'Developing' ? 'warning' : 'success'} />
           <p className="hpc-record__panel-text">{competency.now}</p>
+        </div>
+
+        <p className="hpc-record__eyebrow">How others see it</p>
+        <div className="hpc-record__panel">
+          <ViewsRow competency={competency} />
         </div>
 
         <p className="hpc-record__eyebrow">Over time</p>
@@ -160,6 +281,13 @@ export function LiveHpcTab({ session, onOpenCareer }: { session: Session; onOpen
           <p className="hpc-record__panel-text hpc-record__trend">{competency.trend}</p>
         </div>
 
+        <Checklist
+          title="Try this month"
+          owner={session.code}
+          listId={`tips-${competency.id}`}
+          items={competency.tips.map((tip, index) => ({ id: String(index), text: tip }))}
+        />
+
         <p className="hpc-record__eyebrow">Where this comes from · {competency.sources.length}</p>
         <ul className="hpc-record__sources">
           {competency.sources.map((source) => (
@@ -180,6 +308,17 @@ export function LiveHpcTab({ session, onOpenCareer }: { session: Session; onOpen
     <div className="hpc-record">
       <p className="screen__greeting">Your progress card</p>
       <p className="hpc-record__term">{TERM}</p>
+
+      <div className="hpc-tiles">
+        <Tile value={`${Math.round((daysPresent / schoolDays) * 100)}%`} label="Attendance" detail={`${daysPresent} of ${schoolDays} days`} />
+        <Tile
+          value={`${competencies.filter((competency) => competency.level === 'Proficient' || competency.level === 'Advanced').length} of ${competencies.length}`}
+          label="Competencies proficient"
+          detail={`${competencies.filter((competency) => competency.history[competency.history.length - 1].step > competency.history[0].step).length} grew since last year`}
+        />
+        <Tile value={`${project.stage} of ${project.stages}`} label="Project stage" detail={project.title} />
+        <Tile value={`${activities.reduce((sum, activity) => sum + activity.hours, 0)} h`} label="Beyond the classroom" detail={`${activities.length} activities`} />
+      </div>
 
       <div className="hpc-record__list">
         <Part letter="A" title="About me" detail="Interests, attendance" onClick={() => setView('about')} />
@@ -208,6 +347,13 @@ export function LiveHpcTab({ session, onOpenCareer }: { session: Session; onOpen
       </div>
 
       <Note />
+
+      <h2 className="hpc-record__section">Your term in charts</h2>
+      <p className="hpc-record__sample">Sample data for the demo school.</p>
+      <AttendanceChart />
+      <GrowthChart rows={competencies} />
+      <ViewsChart rows={competencies} />
+      <ActivitiesChart />
     </div>
   )
 }
@@ -242,6 +388,16 @@ function Part({
         ›
       </span>
     </button>
+  )
+}
+
+function Tile({ value, label, detail }: { value: string; label: string; detail: string }) {
+  return (
+    <div className="hpc-tile">
+      <span className="hpc-tile__value">{value}</span>
+      <span className="hpc-tile__label">{label}</span>
+      <span className="hpc-tile__detail">{detail}</span>
+    </div>
   )
 }
 
