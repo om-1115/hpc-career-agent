@@ -88,7 +88,7 @@ https://github.com/om-1115/hpc-career-agent
 Live app: https://hpc-career-agent.vercel.app
 Video: https://drive.google.com/file/d/1j4Z9LbF3U3TctUBFZJVDrT7gIAyu70To/view?usp=sharing
 
-(The live app opens on the demo school's profiles, no sign-up. The video is the 2:43 captioned explainer with a live demo; also in the repo as
+(The live app opens on the demo school's profiles, no sign-up. The video is the 2:53 captioned explainer with a live demo; also in the repo as
 `docs/HPC-Career-Demo.mp4`.)
 
 Slides: https://github.com/om-1115/hpc-career-agent/blob/main/docs/HPC-Career-Explainer.pdf
