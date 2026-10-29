@@ -1,7 +1,7 @@
-node_modules
-.data
-.vercel
-dist
-docs
-counsellor
+# Leading slashes: only these top-level folders (server/counsellor/ is needed).
+/node_modules
+/.data
+/dist
+/docs
+/counsellor
 *.tsbuildinfo
