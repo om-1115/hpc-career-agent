@@ -60,8 +60,9 @@ stays as it is and the two never share data.
    name it `hpc-career-pilot`. The build settings come from `vercel.json`.
 2. **Storage →** connect an Upstash Redis database to the new project (the
    demo's database is fine — the pilot uses its own key — or make a new one; if
-   you make one, pick the region closest to the school, Mumbai if offered).
-   This sets `KV_REST_API_URL` and `KV_REST_API_TOKEN`.
+   you make one, pick Mumbai, where `vercel.json` runs the API — a database
+   far from the API makes every save slow). This sets `KV_REST_API_URL` and
+   `KV_REST_API_TOKEN`.
 3. **Settings → Environment Variables**, for Production:
    - `PILOT_MODE` = `1`
    - `DATA_KEY` = `hpc-career:pilot`
