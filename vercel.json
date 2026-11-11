@@ -1,5 +1,8 @@
 {
   "framework": null,
   "installCommand": "npm ci --include=dev",
-  "buildCommand": "npm run build:vercel"
+  "buildCommand": "npm run build:vercel",
+  "regions": [
+    "bom1"
+  ]
 }

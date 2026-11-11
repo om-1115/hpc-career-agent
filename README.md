@@ -71,7 +71,10 @@ The public demo runs on Vercel: [`vercel.json`](vercel.json) builds the app and
 bundles the API into one Node function
 ([`scripts/build-vercel.mjs`](scripts/build-vercel.mjs)), and the data lives in
 Upstash Redis, connected through Vercel's Storage tab (it sets
-`KV_REST_API_URL` and `KV_REST_API_TOKEN`). The first request on an empty
+`KV_REST_API_URL` and `KV_REST_API_TOKEN`). The database is in Mumbai, so
+`vercel.json` runs the API there too (`"regions": ["bom1"]`): every save makes
+four calls to the database, and from Vercel's default region, Washington, each
+one crosses the world. The first request on an empty
 database seeds the demo school. Set `SESSION_SECRET` in the project's
 environment variables. Locally, with no Redis variables, the app keeps using
 the JSON file in `.data/`.
