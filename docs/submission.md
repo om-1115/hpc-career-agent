@@ -13,6 +13,7 @@ HPC Career — career guidance inside the Holistic Progress Card
 **Team members (names + GitHub handles)**
 
 Om Kumar (@om-1115)
+Insha Naseem (@Insha-Naseem)
 
 **Problem statement** *(2–5 sentences)*
 
